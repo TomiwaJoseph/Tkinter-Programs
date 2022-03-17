@@ -1,10 +1,16 @@
 from tkinter import *
+from tkinter import messagebox
+from PIL import Image, ImageTk
+import simpleaudio as sa
 
+
+# VARIABLES
 root = Tk
 player1_minutes = 0
 player2_minutes = 0
 prev_p1_min = 0
 prev_p2_min = 0
+mp3_object = sa.WaveObject.from_wave_file(r'C:\Users\dretech\Documents\VS Python Stuff\Util Scripts\Tkinter Programs\Chess Clock\alarm.wav')
 
 
 class Switch(root):
@@ -45,43 +51,48 @@ class SetTime(Frame):
         self.root.geometry('630x310')
         self.root.resizable(0,0)
         #======== Variables ==========
-        self.p1_mins = IntVar()
-        self.p1_mins.set(5)
-        self.p1_secs = IntVar()
-        self.p2_mins = IntVar()
-        self.p2_mins.set(5)
-        self.p2_secs = IntVar()
+        self.p1_mins = StringVar()
+        self.p1_mins.set("3")
+        self.p1_secs = StringVar()
+        self.p1_secs.set("0")
+        self.p2_mins = StringVar()
+        self.p2_mins.set("3")
+        self.p2_secs = StringVar()
+        self.p2_secs.set("0")
         #============ UI =============
-        Label(text="Player 1",font='poppins 16',bg='#222',fg='orange').place(x=20,y=60)
-        Label(text='Mins',font='montserrat 16',bg='#222',fg='white').place(x=140,y=40)
+        Label(text="Player 1",font='poppins 16',bg='#222',fg='orange').place(x=90,y=58)
+        Label(text='Mins:',font='montserrat 16',bg='#222',fg='white').place(x=230,y=58)
         self.p1_m = Entry(textvariable=self.p1_mins,width=4,font='montserrat 14',justify=CENTER)
-        self.p1_m.place(x=140,y=80)
-        Label(text='Secs',font='montserrat 16',bg='#222',fg='white').place(x=250,y=40)
+        self.p1_m.place(x=300,y=60)
+        Label(text='Secs:',font='montserrat 16',bg='#222',fg='white').place(x=380,y=58)
         self.p1_s = Entry(textvariable=self.p1_secs,width=4,font='montserrat 14',justify=CENTER)
-        self.p1_s.place(x=250,y=80)
+        self.p1_s.place(x=450,y=60)
 
-        Label(text="Player 2",font='poppins 16',bg='#222',fg='orange').place(x=20,y=160)
-        Label(text='Mins',font='montserrat 16',bg='#222',fg='white').place(x=140,y=140)
+        Label(text="Player 2",font='poppins 16',bg='#222',fg='orange').place(x=90,y=128)
+        Label(text='Mins:',font='montserrat 16',bg='#222',fg='white').place(x=230,y=128)
         self.p2_m = Entry(textvariable=self.p2_mins,width=4,font='montserrat 14',justify=CENTER)
-        self.p2_m.place(x=140,y=180)
-        Label(text='Secs',font='montserrat 16',bg='#222',fg='white').place(x=250,y=140)
+        self.p2_m.place(x=300,y=130)
+        Label(text='Secs:',font='montserrat 16',bg='#222',fg='white').place(x=380,y=128)
         self.p2_s = Entry(textvariable=self.p2_secs,width=4,font='montserrat 14',justify=CENTER)
-        self.p2_s.place(x=250,y=180)
-        Button(text='Set',font='montserrat 14',bg='#222',fg='orange',width=5,
-            command=self.set_it).place(x=140,y=230)
-        Button(text='Go!',font='montserrat 14',bg='#222',fg='orange',width=5,
-            command=lambda:self.master.switch_frame(ClockIt)).place(x=237,y=230)
+        self.p2_s.place(x=450,y=130)
 
-    def set_it(self):
+        Button(text='Start!',font='montserrat 14',bg='#222',fg='orange',width=34,
+            command=self.go_without_time_set).place(x=90,y=190)
+
+    def go_without_time_set(self):
         global player1_minutes,player2_minutes,prev_p1_min,prev_p2_min
-        player1_mins = self.p1_mins.get()
-        player1_secs = self.p1_secs.get()
-        player2_mins = self.p2_mins.get()
-        player2_secs = self.p2_secs.get()
-        player1_minutes = player1_mins * 60 + player1_secs
-        player2_minutes = player2_mins * 60 + player2_secs
-        prev_p1_min = player1_minutes
-        prev_p2_min = player2_minutes
+        try:
+            player1_mins = int(self.p1_mins.get())
+            player1_secs = int(self.p1_secs.get())
+            player2_mins = int(self.p2_mins.get())
+            player2_secs = int(self.p2_secs.get())
+            player1_minutes = player1_mins * 60 + player1_secs
+            player2_minutes = player2_mins * 60 + player2_secs
+            prev_p1_min = player1_minutes
+            prev_p2_min = player2_minutes
+            self.master.switch_frame(ClockIt)
+        except ValueError:
+            messagebox.showerror("Error", "One of the entry box is empty or an invalid value is entered in it. Please enter a number in the entry box.")
 
 
 class ClockIt(Frame):
@@ -93,6 +104,10 @@ class ClockIt(Frame):
         self.root.geometry('630x310')
         self.root.resizable(0,0)
         #===== UI ===================
+        self.status_img = Image.open(r'C:\Users\dretech\Documents\VS Python Stuff\Util Scripts\Tkinter Programs\Chess Clock\flag.png')
+        self.status_img = self.status_img.resize((70,70), Image.ANTIALIAS)
+        self.status_img = ImageTk.PhotoImage(self.status_img)
+        
         self.p1 = Button(command=lambda:self.know_player(self.p1),width=8,font='candara 48',bg='#222',fg='white')
         self.p1.place(x=30,y=60)
         self.p2 = Button(command=lambda:self.know_player(self.p2),width=8,font='candara 48',bg='#222',fg='white')
@@ -103,20 +118,30 @@ class ClockIt(Frame):
             command=self.pause_it).place(x=240,y=210)
         Button(text='Set Time',font='montserrat 14',bg='#222',fg='orange',width=12,
             command=lambda:self.master.switch_frame(SetTime)).place(x=410,y=210)
+        
+        self.flag_p1 = Button(image=self.status_img,text=' ',
+            width=273,font='candara 48',compound='center',bg='#fff')
+        self.flag_p2 = Button(image=self.status_img,text=' ',
+            width=273,font='candara 48',compound='center',bg='#fff')
+                        
         #========= Variables =========
         self.set_it()
         self.game_over = False
         self.p1_paused = True
         self.p2_paused = True
-    
+
     def pause_it(self):
         self.p1_paused = False
         self.p2_paused = False
+        sa.stop_all()
         self.p1.config(state=NORMAL,bg='#222',fg='gray')
         self.p2.config(state=NORMAL,bg='#222',fg='gray')
 
     def reset_it(self):
         global player1_minutes,player2_minutes,prev_p1_min,prev_p2_min
+        self.flag_p1.place_forget()
+        self.flag_p2.place_forget()
+        sa.stop_all()
         player1_minutes = prev_p1_min
         player2_minutes = prev_p2_min
         self.pause_it()
@@ -146,8 +171,9 @@ class ClockIt(Frame):
                 player1_minutes -= 1
                 self.p1.after(1000,self.count_down_1)
             else:
-                self.p1.config(text='Time Up!',fg='red',bg='#fff')
+                self.flag_p1.place(x=30,y=61)
                 self.game_over = True
+                play_object = mp3_object.play()
         else:
             self.p1.config(fg='white',bg='#222')
 
@@ -160,8 +186,9 @@ class ClockIt(Frame):
                 player2_minutes -= 1
                 self.p2.after(1000,self.count_down_2)
             else:
-                self.p2.config(text='Time Up!',fg='red',bg='#fff')
+                self.flag_p2.place(x=320,y=61)
                 self.game_over = True
+                play_object = mp3_object.play()
         else:
             self.p2.config(fg='white',bg='#222')
 
