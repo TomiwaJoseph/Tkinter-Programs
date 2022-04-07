@@ -451,7 +451,7 @@ class App():
             
     def count_text(self):
         text = self.text_area.get(1.0, END)
-        messagebox.showinfo('Word Count',f'You have typed {len(text.split())} words.')
+        messagebox.showinfo('Word Count',f'This note has {len(text.split())} words.')
             
     def stat_text(self):
         status = stat_bar.get()
@@ -488,14 +488,6 @@ class App():
         line_num, col_num = str(int(row)), str(int(col) + 1)  # col starts at 0
         infotext = "Line: {0} | Column: {1}".format(line_num, col_num)
         self.status_bar.config(text=infotext)
-            
-
-'''
-TO DO
-Look closely at the update_note_stats function
-Know if note needs saving before opening new note
-
-'''
 
 
 if __name__ == "__main__":
