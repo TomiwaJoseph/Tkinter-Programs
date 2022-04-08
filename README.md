@@ -29,5 +29,18 @@ A password generator and saver tool for generating and saving your passwords for
 - Input the website you want to use the password for
 - Save these information
 - View your saved passwords
+- Enjoy
 
-## No. 4 - Jumble It
+## No. 4 - Don't Hang
+
+A more fun variation of the hangman game. In this version, you don't hang, instead, you get your score deducted for every wrong choice. It works like this:
+
+- A random word is selected for you from a database (.txt file) of 8 letter words
+- 8 empty tiles are displayed for each letter in the word
+- Press a letter
+- If it is a letter in the randomly selected word, the empty corresponding tile will be replaced with the letter, and points are added to your score
+- It the letter is wrong, points are deducted from your score
+- Press the hint button to get hints (it comes at a cost though...your score points)
+- Enjoy
+
+## No. 5 - Jumble It
