@@ -12,9 +12,6 @@ conn = sqlite3.connect('pass_safe.db')
 cur = conn.cursor()
 current_username = ""
 
-the_blue = '#0059ab'
-the_brown = '#dab88b'
-
 secret_questions = (
     'Wealth or Peace of Mind?', 'Where did you meet your parents?',
     'Who is your musical GOAT?', 'What do you want most in life?'
