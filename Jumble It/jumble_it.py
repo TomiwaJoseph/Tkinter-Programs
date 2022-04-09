@@ -65,7 +65,7 @@ def set_all_variables():
             
 set_all_variables()
 
-game_category = 0
+game_category = 15
 overall_score = 0
 game_total_words = programming_count + occupation_count + country_count\
     + animal_count + musician_count + long_letters_count + football_count
@@ -77,7 +77,7 @@ class Switch(root):
     def __init__(self):
         root.__init__(self)
         self._frame = None
-        self.switch_frame(StartPage)
+        self.switch_frame(Jumble)
 
     def switch_frame(self, frame_class):
         new_frame = frame_class(self)
@@ -363,9 +363,9 @@ class Jumble(Frame):
         newWindow.attributes('-topmost', 'true')
         newWindow.title('About Game')
         newWindow.config(bg='#222')
-        newWindow.geometry('530x220')
+        newWindow.geometry('530x210')
         newWindow.resizable(0,0)
-        Label(newWindow,text="This is a variant of the Hangman Game.\n In this variation you won't hang.\n Wrong letter you press is -2 points\n Right letter you press is +5 points\n Show letter is -5 points\nEnjoy!",
+        Label(newWindow,text="Welcome player!\n This game scatters (jumbles) the letters of a word.\n Enter what you think the arranged word is.\n Use hints and show whole word.\n It will cost you though😎 \nEnjoy!",
               fg='#fff',bg='#222',font='montserrat 14').pack(pady=(20,5))
         
     def about_developer(self):
