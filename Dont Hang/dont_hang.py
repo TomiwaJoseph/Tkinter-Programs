@@ -43,7 +43,6 @@ class StartPage(Frame):
         self.human.place(x=160,y=140)
 
 
-
 class MainPage(Frame):
     def __init__(self,root):
         Frame.__init__(self,root)
