@@ -44,3 +44,29 @@ A more fun variation of the hangman game. In this version, you don't hang, inste
 - Enjoy
 
 ## No. 5 - Jumble It
+
+This game is about rearranging scattered (jumbled) letters to form a correct word. The game works as thus:
+
+- Open app
+- Select category to play (countries, musicians, football teams, occupations, animals, programming terms... )
+- Input what you think the word is
+- If correct + points for you, else, - points for you
+- Use hints if you get stuck
+- Enjoy
+
+## No. 6 - Calculator
+
+A simple calculator to perform simple operations like addition, multiplication, subtraction, division, square root and square.
+Enjoy.
+
+## No. 7 - Tic Tac Toe
+
+The age long game of x-es and o-ohs. It has a play AI version and a play a friend version for you to enjoy. So, enjoy.
+
+## No. 8 - Sudoku
+
+The famous sudoku in three versions. An easy 4x4 version, my wierd version (6x6) and the hard 9x9 version. You just have to try out the wierd version if you have to. Enjoy.
+
+## No. 9 - Hotel CRM
+
+A hotel customer relationship manager (CRM) for a make shift hotel - SERENITY. I don't know how a hotel management system really looks like in real life, so bear with me 😅.
