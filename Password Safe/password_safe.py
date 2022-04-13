@@ -99,12 +99,12 @@ class Choose(Frame):
         self.filemenu.add_command(label='About Developer',command=about_developer)
         self.master.config(menu=self.menubar)
         #======= Bg Image ===============
-        self.bg = Image.open(r'C:\Users\dretech\Documents\VS Python Stuff\Util Scripts\Tkinter Programs\Password Safe\bcg.jpg')
+        self.bg = Image.open('./static/bcg.jpg')
         self.bg = self.bg.resize((700,450), Image.ANTIALIAS)
         self.bg = ImageTk.PhotoImage(self.bg)
         self.bg_image = Label(self.master,image=self.bg).place(x=0,y=0,relwidth=1,relheight=1)
         #========== Box ============
-        intro = Frame(self.master, width=400,height=250,bg='#dab88b')
+        intro = Frame(self.master,width=400,height=250,bg='#dab88b')
         intro.place(x=150,y=90)
         #======= Title =====================
         Label(text='Password Safe',font='montserrat 30',bg='#0059ab').place(x=200,y=153)
@@ -122,7 +122,7 @@ class SignUp(Frame):
         self.master.title('Password Safe | Sign Up')
         self.master.resizable(False,False)
          #======= Bg Image ===============
-        self.bg = Image.open(r'C:\Users\dretech\Documents\VS Python Stuff\Util Scripts\Tkinter Programs\Password Safe\bcg.jpg')
+        self.bg = Image.open('./static/bcg.jpg')
         self.bg = self.bg.resize((700,450), Image.ANTIALIAS)
         self.bg = ImageTk.PhotoImage(self.bg)
         self.bg_image = Label(self.master,image=self.bg).place(x=0,y=0,relwidth=1,relheight=1)
@@ -194,7 +194,7 @@ class LogIn(Frame):
         self.username = StringVar()
         self.password = StringVar()
         #======= Bg Image ===============
-        self.bg = Image.open('bcg.jpg')
+        self.bg = Image.open('./static/bcg.jpg')
         self.bg = self.bg.resize((700,450), Image.ANTIALIAS)
         self.bg = ImageTk.PhotoImage(self.bg)
         self.bg_image = Label(self.master,image=self.bg).place(x=0,y=0,relwidth=1,relheight=1)
@@ -250,7 +250,7 @@ class ForgotPage(Frame):
         self.master.title('Password Safe | Forgot Password')
         self.master.resizable(False,False)
         #======= Bg Image ===============
-        self.bg = Image.open('bcg.jpg')
+        self.bg = Image.open('./static/bcg.jpg')
         self.bg = self.bg.resize((700,450), Image.ANTIALIAS)
         self.bg = ImageTk.PhotoImage(self.bg)
         self.bg_image = Label(self.master,image=self.bg).place(x=0,y=0,relwidth=1,relheight=1)
@@ -390,7 +390,7 @@ class MainPage(Frame):
         self.filemenu.add_command(label='About Developer',command=about_developer)
         self.master.config(menu=self.menubar)
         #======= Bg Image ===============
-        self.bg = Image.open('bcg.jpg')
+        self.bg = Image.open('./static/bcg.jpg')
         self.bg = self.bg.resize((700,450), Image.ANTIALIAS)
         self.bg = ImageTk.PhotoImage(self.bg)
         self.bg_image = Label(self.master,image=self.bg).place(x=0,y=0,relwidth=1,relheight=1)
@@ -505,7 +505,7 @@ class ViewPage(Frame):
         self.master.title('Password Safe | Forgot Password')
         self.master.resizable(False,False)
         #======= Bg Image ===============
-        self.bg = Image.open('bcg.jpg')
+        self.bg = Image.open('./static/bcg.jpg')
         self.bg = self.bg.resize((700,450), Image.ANTIALIAS)
         self.bg = ImageTk.PhotoImage(self.bg)
         self.bg_image = Label(self.master,image=self.bg).place(x=0,y=0,relwidth=1,relheight=1)

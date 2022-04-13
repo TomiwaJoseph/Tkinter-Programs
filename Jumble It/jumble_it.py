@@ -6,8 +6,8 @@ from string import ascii_letters
 
 root = Tk
 all_text_files = [
-    'programming terms.txt','occupations.txt','countries.txt',
-    'animals.txt','musicians.txt','12 letter words.txt','football teams.txt'
+    './static/programming terms.txt','./static/occupations.txt','./static/countries.txt',
+    './static/animals.txt','./static/musicians.txt','./static/12 letter words.txt','./static/football teams.txt'
 ]
 
 #category word count
@@ -77,7 +77,7 @@ class Switch(root):
     def __init__(self):
         root.__init__(self)
         self._frame = None
-        self.switch_frame(Jumble)
+        self.switch_frame(StartPage)
 
     def switch_frame(self, frame_class):
         new_frame = frame_class(self)
@@ -183,7 +183,7 @@ class Jumble(Frame):
         self.menubar.add_cascade(label='About Developer',command=self.about_developer)
         self.root.config(menu=self.menubar)
         #======== Back Button ============
-        self.the_image = PhotoImage(file=r'C:\Users\dretech\Documents\VS Python Stuff\Util Scripts\Tkinter Programs\Jumble It\static\back_arrow.png')
+        self.the_image = PhotoImage(file='./static/back_arrow.png')
         self.back = self.the_image.subsample(1,1)
         Button(image=self.back,bg="#fff",width=50,command=self.go_back).place(x=20,y=20)
         #======== Variables ========

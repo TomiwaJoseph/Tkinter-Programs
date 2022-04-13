@@ -10,7 +10,7 @@ player1_minutes = 0
 player2_minutes = 0
 prev_p1_min = 0
 prev_p2_min = 0
-mp3_object = sa.WaveObject.from_wave_file(r'C:\Users\dretech\Documents\VS Python Stuff\Util Scripts\Tkinter Programs\Chess Clock\alarm.wav')
+mp3_object = sa.WaveObject.from_wave_file('./static/alarm.wav')
 
 
 class Switch(root):
@@ -104,7 +104,7 @@ class ClockIt(Frame):
         self.root.geometry('630x310')
         self.root.resizable(0,0)
         #===== UI ===================
-        self.status_img = Image.open(r'C:\Users\dretech\Documents\VS Python Stuff\Util Scripts\Tkinter Programs\Chess Clock\flag.png')
+        self.status_img = Image.open('./static/flag.png')
         self.status_img = self.status_img.resize((70,70), Image.ANTIALIAS)
         self.status_img = ImageTk.PhotoImage(self.status_img)
         

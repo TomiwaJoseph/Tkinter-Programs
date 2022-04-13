@@ -56,16 +56,16 @@ class App():
         self.text_area.bind('<F2>', self.about_app)
         self.text_area.bind('<Any-KeyPress>', self.update_note_stats)
         #===== MenuBars =========
-        self.new_file_icon = PhotoImage(file=r'C:\Users\dretech\Documents\VS Python Stuff\Util Scripts\Tkinter Programs\Take Note\icons\new_file.gif')
-        self.open_file_icon = PhotoImage(file=r'C:\Users\dretech\Documents\VS Python Stuff\Util Scripts\Tkinter Programs\Take Note\icons\open_file.gif')
-        self.save_file_icon = PhotoImage(file=r'C:\Users\dretech\Documents\VS Python Stuff\Util Scripts\Tkinter Programs\Take Note\icons\save.gif')
-        self.cut_icon = PhotoImage(file=r'C:\Users\dretech\Documents\VS Python Stuff\Util Scripts\Tkinter Programs\Take Note\icons\cut.gif')
-        self.copy_icon = PhotoImage(file=r'C:\Users\dretech\Documents\VS Python Stuff\Util Scripts\Tkinter Programs\Take Note\icons\copy.gif')
-        self.paste_icon =PhotoImage(file=r'C:\Users\dretech\Documents\VS Python Stuff\Util Scripts\Tkinter Programs\Take Note\icons\paste.gif')
-        self.undo_icon = PhotoImage(file=r'C:\Users\dretech\Documents\VS Python Stuff\Util Scripts\Tkinter Programs\Take Note\icons\undo.gif')
-        self.redo_icon = PhotoImage(file=r'C:\Users\dretech\Documents\VS Python Stuff\Util Scripts\Tkinter Programs\Take Note\icons\redo.gif')
-        self.find_icon = PhotoImage(file=r'C:\Users\dretech\Documents\VS Python Stuff\Util Scripts\Tkinter Programs\Take Note\icons\find_text.gif')
-        self.about_icon = PhotoImage(file=r'C:\Users\dretech\Documents\VS Python Stuff\Util Scripts\Tkinter Programs\Take Note\icons\about.gif')
+        self.new_file_icon = PhotoImage(file='./static/new_file.gif')
+        self.open_file_icon = PhotoImage(file='./static/open_file.gif')
+        self.save_file_icon = PhotoImage(file='./static/save.gif')
+        self.cut_icon = PhotoImage(file='./static/cut.gif')
+        self.copy_icon = PhotoImage(file='./static/copy.gif')
+        self.paste_icon =PhotoImage(file='./static/paste.gif')
+        self.undo_icon = PhotoImage(file='./static/undo.gif')
+        self.redo_icon = PhotoImage(file='./static/redo.gif')
+        self.find_icon = PhotoImage(file='./static/find_text.gif')
+        self.about_icon = PhotoImage(file='./static/about.gif')
 
         menubar = Menu(root)
         filemenu = Menu(menubar,tearoff=0)
@@ -121,7 +121,7 @@ class App():
                self.copy_selection,self.paste_selection,self.undo_change,
                self.redo_change,self.find_text]
         for i, icon in enumerate(icons):
-            tool_icon = PhotoImage(file=r'C:\Users\dretech\Documents\VS Python Stuff\Util Scripts\Tkinter Programs\Take Note\icons\{}.gif'.format(icon))
+            tool_icon = PhotoImage(file='./static/{}.gif'.format(icon))
             tool_bar = Button(self.shortcut_bar, image=tool_icon, command=cmd[i])
             tool_bar.image = tool_icon
             tool_bar.pack(side='left',padx=5,pady=5)
