@@ -408,7 +408,7 @@ class HotelCRM(Frame):
             width=280,fg='teal',font='montserrat 14',compound='left',bg='cornsilk')
         self.rooms.place(x=85,y=267)
 
-        self.filter_img = Image.open('./images/payments.png')
+        self.filter_img = Image.open('./images/filter.png')
         self.filter_img = self.filter_img.resize((50,50), Image.ANTIALIAS)
         self.filter_img = ImageTk.PhotoImage(self.filter_img)
         self.filter = Button(image=self.filter_img,command=self.filter_section,text='  Filter Rooms',
