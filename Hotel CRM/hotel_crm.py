@@ -3,6 +3,7 @@ import sqlite3
 from tkinter import *
 from tkinter import ttk
 from PIL import Image, ImageTk
+from random import choice
 
 root = Tk
 current_user = 'STAFF'
@@ -77,7 +78,7 @@ class Switch(root):
     def __init__(self):
         root.__init__(self)
         self._frame = None
-        self.switch_frame(HotelCRM)
+        self.switch_frame(AdminHotelCRM)
 
     def switch_frame(self, frame_class):
         new_frame = frame_class(self)
@@ -149,11 +150,14 @@ class AdminLogin(Frame):
         self.go_back_button.place(x=45,y=680)
         
     def check_credentials(self):
+        global current_user
         username, password = self.username.get(), self.password
         # user = cur.execute(f"SELECT username FROM AdminUsers WHERE username='{username}'")
         # check = [i[0] for i in user]
         # passw = cur.execute(f"SELECT password FROM Users WHERE username='{user_entry}'")
         print('enter db to find out...')
+        current_user = 'STAFF'
+        self.master.switch_frame(AdminHotelCRM)
 
 
 class AdminHotelCRM(Frame):
@@ -162,6 +166,191 @@ class AdminHotelCRM(Frame):
         Frame.configure(self,bg='#fff')
         self.root = root
         self.root.title('Serenity Hotel Admin')
+        # =========== Top Bar ==========
+        self.hotel_name_frame = Frame(self.master,width=1300,height=80,relief='ridge',bg='#fff',bd=5)
+        self.hotel_name_frame.place(anchor=CENTER,relx=0.5,rely=0.09)
+        self.utils = Frame(self.master,width=1300,height=600,relief='ridge',bg='#fff',bd=5)
+        self.utils.place(anchor=CENTER,relx=0.5,rely=0.56)
+        #======= Hotel Logo ===============
+        self.bg = Image.open('./images/hotel_logo.PNG')
+        self.bg = self.bg.resize((80,60), Image.ANTIALIAS)
+        self.bg = ImageTk.PhotoImage(self.bg)
+        self.bg_image = Label(self.master,image=self.bg,bg='#fff').place(x=240,y=35)
+        Label(text='SERENITY HOTEL AND RESORTS',font='montserrat 36',bg='#fff',
+              fg='orangered',bd=0).place(x=350,y=35)
+        # ========== Display Sidebar ==============
+        self.display_sidebar()
+        # ========== Bigger Frames Hidden Until Clicked on ========================
+        self.status_frame = Frame(self.utils,borderwidth=2,relief='ridge',width=880,
+            height=560,bg='cornsilk',bd=5)
+        self.rooms_frame = Frame(self.utils,borderwidth=2,relief='ridge',width=880,
+            height=560,bg='cornsilk',bd=5)
+        self.staffs_frame = Frame(self.utils,borderwidth=2,relief='ridge',width=880,
+            height=560,bg='cornsilk',bd=5)
+        self.reservation_frame = Frame(self.utils,borderwidth=2,relief='ridge',width=880,
+            height=560,bg='cornsilk',bd=5)
+        # ======== Other variables ================
+        self.buttons = [self.status,self.rooms,self.staffs]
+        self.all_frames = [self.status_frame,self.staffs_frame,self.rooms_frame]
+        
+        self.rooms_section()
+                
+    def status_section(self):
+        self.change_look(self.status)
+        self.delete_frames()
+        self.status_frame.place(x=365,y=15)
+        # ========= Hotel information form ===========
+        hotel_info_form_frame = Frame(self.status_frame,width=750,height=230,relief='ridge',bg='cornsilk',bd=3)
+        hotel_info_form_frame.place(x=60,y=140)
+        Label(hotel_info_form_frame,font='montserrat 28',bg='teal',fg='#fff',
+            text='Edit hotel information').place(anchor=CENTER,relx=0.5,rely=0.21)
+        Label(hotel_info_form_frame,font='montserrat 28',bg='cornsilk',fg='teal',
+            text='Edit hotel information').place(anchor=CENTER,relx=0.5,rely=0.2)
+
+        Label(hotel_info_form_frame,text='Total rooms:',font='montserrat 20',
+            bg='cornsilk',fg='teal').place(x=100,y=90)
+        self.admin_total_rooms = Entry(hotel_info_form_frame,bg='#dadada',fg='#222',font='montserrat 12',width=30)
+        self.admin_total_rooms.place(x=280,y=100)
+        
+        Label(hotel_info_form_frame,text='Total number of staff:',font='montserrat 20',
+            bg='cornsilk',fg='teal').place(x=100,y=140)
+        self.admin_staff_number = Entry(hotel_info_form_frame,bg='#dadada',fg='#222',font='montserrat 12',width=19)
+        self.admin_staff_number.place(x=400,y=150)
+        
+        Button(self.status_frame,command=self.save_hotel_status_edit,width=50,text='Save hotel information',
+            fg='#fff',bg='#dd4735',font='montserrat 16').place(anchor=CENTER,relx=0.5,rely=0.75)
+    
+    def save_hotel_status_edit(self):
+        admin_total_rooms = self.admin_total_rooms.get()
+        admin_staff_number = self.admin_staff_number.get()
+        print(admin_total_rooms)
+        print(admin_staff_number)
+        print('saving hotel info...')
+        print('saved')
+    
+    def rooms_section(self):
+        self.change_look(self.rooms)
+        self.delete_frames()
+        self.rooms_frame.place(x=365,y=15)
+        # ======= Variables ==========
+        hotel_rooms = 20
+        x_coordinates = [67, 217, 367, 517, 667]
+        y_coordinates = [120, 200, 280, 360]
+        """set availabily from database"""
+        available_choice = ['available', 'busy']
+        available = [choice(available_choice) for i in range(20)]
+        # ======= Get rooms ==========
+        button_count = 0
+        for y_coord in y_coordinates:
+            for x_coord in x_coordinates:
+                if available[button_count] == "available":
+                    button_count += 1
+                    but = Button(self.rooms_frame,text=f'Room {button_count}',font='montserrat 16',fg='#fff',
+                        bg='teal',width=9,relief='groove',bd=0)
+                else:
+                    button_count += 1
+                    but = Button(self.rooms_frame,text=f'Room {button_count}',font='montserrat 16',fg='#fff',
+                        bg='#dd4735',width=9,relief='groove',bd=0)
+                but.place(x=x_coord,y=y_coord)
+    
+    def staffs_section(self):
+        self.change_look(self.staffs)
+        self.delete_frames()
+        self.staffs_frame.place(x=365,y=15)
+                # ========= Hotel information form ===========
+        hotel_staff_form_frame = Frame(self.staffs_frame,width=750,height=290,relief='ridge',bg='cornsilk',bd=3)
+        hotel_staff_form_frame.place(x=60,y=100)
+        Label(hotel_staff_form_frame,font='montserrat 28',bg='teal',fg='#fff',
+            text='Edit staff information').place(anchor=CENTER,relx=0.5,rely=0.105)
+        Label(hotel_staff_form_frame,font='montserrat 28',bg='cornsilk',fg='teal',
+            text='Edit staff information').place(anchor=CENTER,relx=0.5,rely=0.1)
+
+        Label(hotel_staff_form_frame,text="Manager:",font='montserrat 20',
+            bg='cornsilk',fg='teal').place(x=60,y=70)
+        self.admin_manager_edit = Entry(hotel_staff_form_frame,bg='#dadada',fg='#222',font='montserrat 14',width=35)
+        self.admin_manager_edit.insert(0, "Manager's name")
+        self.admin_manager_edit.place(x=200,y=80)
+        
+        Label(hotel_staff_form_frame,text="Chef:",font='montserrat 20',
+            bg='cornsilk',fg='teal').place(x=60,y=120)
+        self.admin_chef_edit = Entry(hotel_staff_form_frame,bg='#dadada',fg='#222',font='montserrat 14',width=40)
+        self.admin_chef_edit.insert(0, "Chef's name")
+        self.admin_chef_edit.place(x=140,y=130)
+        
+        Label(hotel_staff_form_frame,text="Room Service:",font='montserrat 20',
+            bg='cornsilk',fg='teal').place(x=60,y=170)
+        self.admin_room_service_edit = Entry(hotel_staff_form_frame,bg='#dadada',fg='#222',font='montserrat 14',width=30)
+        self.admin_room_service_edit.insert(0, "Room service's name")
+        self.admin_room_service_edit.place(x=270,y=180)
+        
+        Label(hotel_staff_form_frame,text="Customer Service:",font='montserrat 20',
+            bg='cornsilk',fg='teal').place(x=60,y=220)
+        self.admin_customer_service_edit = Entry(hotel_staff_form_frame,bg='#dadada',fg='#222',font='montserrat 14',width=26)
+        self.admin_customer_service_edit.insert(0, "Customer's name")
+        self.admin_customer_service_edit.place(x=320,y=230)
+        
+        Button(self.staffs_frame,command=self.save_hotel_staff_details,width=50,text='Save staff information',
+            fg='#fff',bg='#dd4735',font='montserrat 16').place(anchor=CENTER,relx=0.5,rely=0.78)
+
+    def save_hotel_staff_details(self):
+        admin_manager_edit = self.admin_manager_edit.get()
+        admin_chef_edit = self.admin_chef_edit.get()
+        admin_room_service_edit = self.admin_room_service_edit.get()
+        admin_customer_service_edit = self.admin_customer_service_edit.get()
+        print(admin_manager_edit)
+        print(admin_chef_edit)
+        print(admin_room_service_edit)
+        print(admin_customer_service_edit)
+        print('saving to db...')
+        print('saved')
+    
+    def change_look(self, button):
+        for but in self.buttons:
+            but.config(fg='teal',bg='cornsilk',relief='groove')
+        button.config(fg='#fff',bg='#dd4735',relief='ridge')
+        
+    def delete_frames(self):
+        for frame in self.all_frames:
+            frame.place_forget()
+        
+    def logout_section(self):
+        global current_user
+        current_user = 'STAFF'
+        self.master.switch_frame(StartPage)
+    
+    def display_sidebar(self):
+        # =============== Side Bar =================
+        self.status_img = Image.open('./images/hotelstatus.png')
+        self.status_img = self.status_img.resize((50,50), Image.ANTIALIAS)
+        self.status_img = ImageTk.PhotoImage(self.status_img)
+        self.status = Button(image=self.status_img,command=self.status_section,text='  Hotel Status',
+            width=280,fg='teal',font='montserrat 14',compound='left',bg='cornsilk',
+            bd=2,relief='groove')
+        self.status.place(x=85,y=202)
+        
+        self.rooms_img = Image.open('./images/rooms.png')
+        self.rooms_img = self.rooms_img.resize((50,50), Image.ANTIALIAS)
+        self.rooms_img = ImageTk.PhotoImage(self.rooms_img)
+        self.rooms = Button(image=self.rooms_img,command=self.rooms_section,text='  Rooms',
+            width=280,fg='teal',font='montserrat 14',compound='left',bg='cornsilk',
+            bd=2,relief='groove')
+        self.rooms.place(x=85,y=322)
+        
+        self.staff_img = Image.open('./images/guests.png')
+        self.staff_img = self.staff_img.resize((50,50), Image.ANTIALIAS)
+        self.staff_img = ImageTk.PhotoImage(self.staff_img)
+        self.staffs = Button(image=self.staff_img,command=self.staffs_section,text='  Staffs',
+            width=280,fg='teal',font='montserrat 14',compound='left',bg='cornsilk',
+            bd=2,relief='groove')
+        self.staffs.place(x=85,y=442)
+                
+        self.logout_img = Image.open('./images/logout.png')
+        self.logout_img = self.logout_img.resize((50,50), Image.ANTIALIAS)
+        self.logout_img = ImageTk.PhotoImage(self.logout_img)
+        self.logout = Button(image=self.logout_img,command=self.logout_section,text='  Logout',
+            width=280,fg='teal',font='montserrat 14',compound='left',bg='cornsilk',
+            bd=2,relief='groove')
+        self.logout.place(x=85,y=562)        
 
 
 class HotelCRM(Frame):
@@ -465,7 +654,6 @@ class HotelCRM(Frame):
         x_coordinates = [67, 217, 367, 517, 667]
         y_coordinates = [20, 100, 180, 260]
         """set availabily from database"""
-        from random import choice
         available_choice = ['available', 'busy']
         available = [choice(available_choice) for i in range(20)]
         # ======= Get rooms ==========
@@ -734,7 +922,6 @@ class HotelCRM(Frame):
             font='montserrat 10').place(x=0,y=45)
         Label(customer_service_frame,text=f'Email: {customer_service_email}',bg='#fff',
             font='montserrat 10').place(x=0,y=65)
-
 
 
 if __name__ == '__main__':
