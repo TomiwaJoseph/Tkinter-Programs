@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import sqlite3
 from tkinter import *
 from tkinter import ttk
@@ -64,21 +64,16 @@ def create_table_if_not_exist():
     cur.execute(room_table)
     conn.commit()
 
-# all_tables_are_created = cur.execute("SELECT * FROM sqlite_master where type='table'")
-# print(all_tables_are_created)
-# individual_table = [table for table in all_tables_are_created.fetchall()]
-# print(individual_table)
-print()
-# if not all_tables_are_created:
-#     print('tables not created')
-#     # create_table_if_not_exist()
+all_tables_are_created = cur.execute("SELECT name FROM sqlite_master where type='table'")
+if not all_tables_are_created.fetchall():
+    create_table_if_not_exist()
 
 
 class Switch(root):
     def __init__(self):
         root.__init__(self)
         self._frame = None
-        self.switch_frame(AdminHotelCRM)
+        self.switch_frame(HotelCRM)
 
     def switch_frame(self, frame_class):
         new_frame = frame_class(self)
@@ -233,7 +228,6 @@ class AdminHotelCRM(Frame):
         self.delete_frames()
         self.rooms_frame.place(x=365,y=15)
         # ======= Variables ==========
-        hotel_rooms = 20
         x_coordinates = [67, 217, 367, 517, 667]
         y_coordinates = [120, 200, 280, 360]
         """set availabily from database"""
@@ -443,8 +437,6 @@ class HotelCRM(Frame):
         self.delete_frames()
         self.reservation_frame.place(x=365,y=15)
         
-        # Label(self.reservation_frame,font='montserrat 24',bg='cornsilk',fg='teal',
-        #     text='Reservation area').place(anchor=CENTER,relx=0.5,rely=0.05)
         reservation_form_frame = Frame(self.reservation_frame,width=750,height=450,relief='ridge',bg='cornsilk',bd=3)
         reservation_form_frame.place(x=60,y=50)
         
@@ -602,7 +594,26 @@ class HotelCRM(Frame):
 
         self.room_number.bind('<FocusIn>', entry_click10)
         self.room_number.bind('<FocusOut>', out_click10)
-        
+    
+    def form_submit_result(self, error_type):
+        newWindow = Toplevel(self.root)
+        newWindow.attributes('-topmost', 'true')
+        newWindow.title('Form Submit Result')
+        newWindow.config(bg='#dd4735')
+        newWindow.geometry('500x80')
+        newWindow.resizable(0,0)
+        if error_type == 'incomplete form':
+            Label(newWindow,text="Please fill the form completely & correctly.",
+                fg='#fff',bg='#dd4735',font='montserrat 14').pack(pady=(20,5))
+        elif error_type == 'unavailable room':
+            newWindow.geometry('500x110')
+            Label(newWindow,text="Room in use or wrong input. \nPlease choose an available room.",
+                fg='#fff',bg='#dd4735',font='montserrat 14').pack(pady=(20,5))
+        else:
+            newWindow.config(bg='green')
+            Label(newWindow,text="Room have been booked successfully.",
+                fg='#fff',bg='green',font='montserrat 14').pack(pady=(20,5))
+            
     def reserve_it(self):
         f_name = self.first_name.get()
         m_name = self.middle_name.get()
@@ -616,51 +627,66 @@ class HotelCRM(Frame):
         room_no = self.room_number.get()
         pay_meth = self.pay_option.get()
         
-        # know_if_room_is_available = cur.execute(f"SELECT room_status from Room_Details where id='{room_no}'").fetchone()
-        know_if_room_is_available = ['Available']
+        room_is_available = cur.execute(f"SELECT room_status from Room_Details where id='{room_no}'").fetchone()
         
         if f_name in ['', 'First Name *'] or m_name in ['', 'Middle Name *'] or l_name in ['', 'Last Name *'] or\
             contact_no in ['Phone No. *'] or email in ['', 'Email *'] or address in ['', 'Address *'] or\
             children_no in ['', 'No. of Children *'] or adult_no in ['', 'No. of Adults *'] or\
             days_no in ['', 'No. of Days *'] or room_no in ['', 'Room No. *'] or pay_meth == 'Payment Method...':
-            self.reservation_message.config(text='Please fill the form completely & correctly.',fg='red')
-            self.reservation_message.place(anchor=CENTER,relx=0.5,rely=0.05)
-        elif know_if_room_is_available[0] != 'Available':
-            self.reservation_message.config(text='Room in use. Please choose another.',fg='red')
-            self.reservation_message.place(anchor=CENTER,relx=0.5,rely=0.05)
-        else:
-            # cur.execute("INSERT INTO Customer_Details\
-            #     (first_name,middle_name,last_name,contact_number,email,address,room_id,\
-            #     transaction_datetime,payment_method) VALUES(?,?,?,?,?,?,?,?,?)",
-            #     (f_name,m_name,l_name,contact_no,email,address,room_no,datetime.now(),pay_meth))
-            # # Make the room unavailable in database
-            # cur.execute("UPDATE Room_Details SET room_status=? WHERE id=?",
-            #     ('Unavailable', room_no))
-            # # Get no. of available rooms and decrement by 1
-            # avail = cur.execute("SELECT available_rooms from Hotel_Details").fetchone()
-            # value = int(avail[0]) - 1
-            # cur.execute("UPDATE Hotel_Details SET available_rooms=?",
-            #     (str(value)))
-            # conn.commit()
-            self.reservation_message.config(text='Room have been booked successfully.',fg='green')
-            self.reservation_message.place(anchor=CENTER,relx=0.5,rely=0.05)
+            # self.reservation_message.config(text='Please fill the form completely & correctly.',fg='red')
+            # self.reservation_message.place(anchor=CENTER,relx=0.5,rely=0.05)
+            self.form_submit_result('incomplete form')
+            return
+        try:
+            room_status = room_is_available[0]
+            if room_status == "UNAVAILABLE":
+                raise TypeError
+            # self.reservation_message.config(text='Room in use. Please choose another.',fg='red')
+            # self.reservation_message.place(anchor=CENTER,relx=0.5,rely=0.05)
+        except TypeError:
+            self.form_submit_result('unavailable room')
+            return
+        
+        try:
+            # Insert customer into database
+            time_now = datetime.now()
+            formatted_time = f'{time_now.year}/{time_now.month}/{time_now.day} {time_now.hour}:{time_now.minute}:{time_now.second}'
+            later_date = datetime.now() + timedelta(days=int(days_no))
+            expiry_date = f'{later_date.year}/{later_date.month}/{later_date.day} {later_date.hour}:{later_date.minute}:{later_date.second}'
+            cur.execute("INSERT INTO Customer_Details\
+                (first_name,middle_name,last_name,contact_number,email,customer_address,room_id,payment_method,\
+                transaction_datetime,expiry_datetime) VALUES(?,?,?,?,?,?,?,?,?,?)",
+                (f_name,m_name,l_name,contact_no,email,address,room_no,pay_meth,formatted_time,expiry_date))
+            # Make the room unavailable in database
+            cur.execute("UPDATE Room_Details SET room_status=? WHERE id=?",
+                ('UNAVAILABLE', room_no))
+            # Get no. of available rooms and customer number in hotel status and decrement by 1
+            avail = cur.execute("SELECT available_rooms, total_customers from Hotel_Details").fetchone()
+            value = int(avail[0]) - 1
+            total_cust = int(avail[1]) + 1
+            cur.execute("UPDATE Hotel_Details SET available_rooms=?, total_customers=?",
+                (str(value), total_cust))
+            conn.commit()
+            # self.reservation_message.config(text='Room have been booked successfully.',fg='green')
+            # self.reservation_message.place(anchor=CENTER,relx=0.5,rely=0.05)
+            self.form_submit_result('successful booking')
+        except ValueError:
+            self.form_submit_result('incomplete form')
     
     def rooms_section(self):
         self.change_look(self.rooms)
         self.delete_frames()
         self.rooms_frame.place(x=365,y=15)
         # ======= Variables ==========
-        hotel_rooms = 20
+        self.hotel_rooms_query = cur.execute(f"SELECT * FROM Room_Details").fetchall()
         x_coordinates = [67, 217, 367, 517, 667]
         y_coordinates = [20, 100, 180, 260]
-        """set availabily from database"""
-        available_choice = ['available', 'busy']
-        available = [choice(available_choice) for i in range(20)]
+        get_availability = [i[6] for i in self.hotel_rooms_query]
         # ======= Get rooms ==========
         button_count = 0
         for y_coord in y_coordinates:
             for x_coord in x_coordinates:
-                if available[button_count] == "available":
+                if get_availability[button_count] == "AVAILABLE":
                     button_count += 1
                     but = Button(self.rooms_frame,text=f'Room {button_count}',font='montserrat 16',fg='#fff',
                         bg='teal',width=9,relief='groove')
@@ -689,22 +715,23 @@ class HotelCRM(Frame):
             label.place_forget()
         # Query database according to button press
         # data = cur.execute(f"SELECT * FROM Room_Details WHERE id='{button}'").fetchall()
-        data = [['1','3',"YES", "YES","YES", '5000', "Available"],'another']
-        room_id = data[0][0]
-        no_of_beds = data[0][1]
-        avail_ac = data[0][2]
-        avail_tv = data[0][3]
-        avail_wifi = data[0][4]
-        room_price = data[0][5]
-        # room_available = data[0][6]
-        room_available = data[0][6]
-        from random import choice
-        available_choice = ['Available', 'busy']
-        room_available = choice(available_choice)
+        # pressed_room = [['1','3',"YES", "YES","YES", '5000', "Available"],'another']
+        pressed_room = [i for i in self.hotel_rooms_query if i[0] == button]
+        # print(test)
+        no_of_beds = pressed_room[0][1]
+        avail_ac = pressed_room[0][2]
+        avail_tv = pressed_room[0][3]
+        avail_wifi = pressed_room[0][4]
+        room_price = pressed_room[0][5]
+        room_available = pressed_room[0][6]
+        # # room_available = data[0][6]
+        # room_available = pressed_room[0][6]
+        # # available_choice = ['Available', 'busy']
+        # # room_available = choice(available_choice)
         
         # if staff presses available button, show room details else show unavailable
-        if room_available == 'Available':
-            self.show_room_id.config(text=f'Room NO: {room_id}',font='montserrat 18 bold')
+        if room_available == 'AVAILABLE':
+            self.show_room_id.config(text=f'Room NO: {button}',font='montserrat 18 bold')
             self.show_room_id.place(x=40,y=30)
             self.show_bed.config(text=f'Bed(s): {no_of_beds}')
             self.show_bed.place(x=40,y=70)
@@ -719,7 +746,7 @@ class HotelCRM(Frame):
             # self.show_status.config(text=f'Available?: {room_available}',fg='green')
             # self.show_status.place(x=205,y=122)
         else:
-            self.show_unavailability.config(text="Unavailable",font='montserrat 36',fg='#dd4735')
+            self.show_unavailability.config(text="UNAVAILABLE",font='montserrat 36',fg='#dd4735')
             self.show_unavailability.place(anchor=CENTER,relx=0.5,rely=0.5)
     
     def filter_section(self):
@@ -760,70 +787,54 @@ class HotelCRM(Frame):
         self.wifi_option.current(0)
         self.wifi_option.place(x=495,y=131)
         
+        self.show_filter_results = Frame(self.filter_frame,width=750,height=150,relief='ridge',bg='cornsilk',bd=3)
+        self.show_filter_results.place(anchor=CENTER,relx=0.5,rely=0.8)
+        
         Button(filter_form_frame,command=self.find_it,width=44,text='Search rooms',
             fg='#fff',bg='#dd4735',font='montserrat 16').place(anchor=CENTER,relx=0.5,rely=0.82)
     
     def find_it(self):
-        bed = self.bed_option.get()
-        ac = self.ac_option.get()
-        tv = self.tv_option.get()
-        wifi = self.wifi_option.get()
-        # data = cur.execute(f"SELECT id, price FROM Room_Details WHERE room_status='Available'\
-        #     and beds='{bed}' and tv='{tv}' and ac='{ac}' and wiFi='{wifi}' ").fetchall()
+        self.show_filter_results = Frame(self.filter_frame,width=750,height=150,relief='ridge',bg='cornsilk',bd=3)
+        self.show_filter_results.place(anchor=CENTER,relx=0.5,rely=0.8)
         
-        # but = Label(self.filter_frame,text=f'No room match your search parameters...',font='montserrat 24',fg='#dd4735',
-        #     bg='cornsilk')
-        # but.place(anchor=CENTER,relx=0.5,rely=0.72)
-        # but = Button(self.filter_frame,text=f'Room 3',font='montserrat 16',fg='#fff',
-        #     bg='teal',width=15,relief='groove')
-        # but.place(x=63,y=370)
-        # but = Button(self.filter_frame,text=f'Room 9',font='montserrat 16',fg='#fff',
-        #     bg='teal',width=15,relief='groove')
-        # but.place(x=323,y=370)
-        # but = Button(self.filter_frame,text=f'Room 15',font='montserrat 16',fg='#fff',
-        #     bg='teal',width=15,relief='groove')
-        # but.place(x=583,y=370)
-        # but = Button(self.filter_frame,text=f'Room 18',font='montserrat 16',fg='#fff',
-        #     bg='teal',width=15,relief='groove')
-        # but.place(x=63,y=430)
-        # but = Button(self.filter_frame,text=f'Room 19',font='montserrat 16',fg='#fff',
-        #     bg='teal',width=15,relief='groove')
-        # but.place(x=323,y=430)
-        # but = Button(self.filter_frame,text=f'Room 20',font='montserrat 16',fg='#fff',
-        #     bg='teal',width=15,relief='groove')
-        # but.place(x=583,y=430)
+        bed = 29 if self.bed_option.get() == ' _ _'*8 else self.bed_option.get()
+        ac = "NOPE" if self.ac_option.get() == ' _ _'*8 else self.ac_option.get()
+        tv = "NOPE" if self.tv_option.get() == ' _ _'*8 else self.tv_option.get()
+        wifi = "NOPE" if self.wifi_option.get() == ' _ _'*8 else self.wifi_option.get()
         
-        x_coordinates = [63, 323, 583]
-        y_coordinates = [370, 430]
+        x_coordinates = [17, 267, 507]
+        y_coordinates = [16, 80]
         joined_coordinates = []
         for i in range(2):
             for x_coord in x_coordinates:
                 for y_coord in y_coordinates:
                     pass
                 joined_coordinates.append((x_coord, y_coordinates[i]))
-        from random import sample
-        bad = sample(range(1,21),4)
-        data = [str(i) for i in bad]
-        # data = []
+        
+        data = cur.execute(f"SELECT id FROM Room_Details WHERE room_status='AVAILABLE'\
+            and beds='{bed}' and tv='{tv}' and ac='{ac}' and wiFi='{wifi}' ").fetchall()
         if data:
             for i in range(len(data)):
-                but = Button(self.filter_frame,text=f'Room {data[i]}',font='montserrat 16',fg='#fff',
+                but = Button(self.show_filter_results,text=f'Room {data[i][0]}',font='montserrat 16',fg='#fff',
                     bg='teal',width=15,relief='groove')
                 but.place(x=joined_coordinates[i][0],y=joined_coordinates[i][1])
         else:
-            but = Label(self.filter_frame,text=f'No room match your search parameters...',font='montserrat 24',fg='#dd4735',
+            but = Label(self.show_filter_results,text=f'No room match your search parameters...',font='montserrat 24',fg='#dd4735',
                 bg='cornsilk')
-            but.place(anchor=CENTER,relx=0.5,rely=0.72)
+            but.place(anchor=CENTER,relx=0.5,rely=0.5)
         
     def status_section(self):
         self.change_look(self.status)
         self.delete_frames()
         self.status_frame.place(x=365,y=15)
+        # ============= Variables ================
+        hotel_status_query = cur.execute(f"SELECT total_rooms, available_rooms, total_customers,\
+            total_staff FROM Hotel_Details").fetchall()
         
-        total_rooms = 20
-        available_rooms = 9
-        total_customers = 0
-        total_staff = 23
+        total_rooms = hotel_status_query[0][0]
+        available_rooms = hotel_status_query[0][1]
+        total_customers = hotel_status_query[0][2]
+        total_staff = hotel_status_query[0][3]
         
         Label(self.status_frame,text=f' Total rooms: {total_rooms} ',bg='cornsilk',fg='teal',
             font='montserrat 28',borderwidth=5,relief='groove').place(x=60,y=80)
@@ -839,21 +850,24 @@ class HotelCRM(Frame):
         self.delete_frames()
         self.contacts_frame.place(x=365,y=15)
         #======= variables ===============
-        manager_name = 'Mr. Tomiwa Joseph'
-        manager_extension = '001'
-        manager_email = 'tomiwajoseph88@gmail.com'
+        hotel_staffs_query = cur.execute(f"SELECT staff_name, staff_extension, staff_email\
+             FROM Staff_Details").fetchall()
         
-        chef_name = 'Mr. Clement Smith'
-        chef_extension = '002'
-        chef_email = 'clementsmith@gmail.com'
+        manager_name = hotel_staffs_query[0][0]
+        manager_extension = hotel_staffs_query[0][1]
+        manager_email = hotel_staffs_query[0][2]
         
-        room_service_name = 'Mrs. Jane Doe'
-        room_service_extension = '003'
-        room_service_email = 'janedoe@gmail.com'
+        chef_name = hotel_staffs_query[1][0]
+        chef_extension = hotel_staffs_query[1][1]
+        chef_email = hotel_staffs_query[1][2]
         
-        customer_service_name = 'Mrs. Mary Stone'
-        customer_service_extension = '004'
-        customer_service_email = 'marystone@gmail.com'
+        room_service_name = hotel_staffs_query[2][0]
+        room_service_extension = hotel_staffs_query[2][1]
+        room_service_email = hotel_staffs_query[2][2]
+        
+        customer_service_name = hotel_staffs_query[3][0]
+        customer_service_extension = hotel_staffs_query[3][1]
+        customer_service_email = hotel_staffs_query[3][2]
         
         #======= Manager ===============
         self.manager_img = Image.open('./images/newman.jpg')
@@ -932,3 +946,5 @@ if __name__ == '__main__':
     photo = ImageTk.PhotoImage(ico)
     app.wm_iconphoto(False, photo)
     app.mainloop()
+    
+#reservation to check room details if expired
