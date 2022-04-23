@@ -4,7 +4,6 @@ from random import choice
 import names as rand_names
 from datetime import datetime, timedelta
 
-
 conn = sqlite3.connect('hotel_crm.db')
 cur = conn.cursor()
 
@@ -32,6 +31,7 @@ price = [choice(all_price) for i in range(20)]
 all_status = ["UNAVAILABLE", "AVAILABLE"]
 room_status = [choice(all_status) for i in range(20)]
 
+positions = ['Manager', 'Chef', 'Room Service', 'Customer Service']
 names = ['Mr. Tomiwa Joseph', 'Mr. Clement Smith', 'Mrs. Jane Doe', 'Mrs. Mary Stone']
 extensions = ['001', '002', '003', '004']
 emails = ['tomiwajoseph88@gmail.com', 'clementsmith@gmail.com',
@@ -61,7 +61,7 @@ for i in range(1,12):
     the_time = datetime.now() + timedelta(days=i)
     formatted_time = f'{the_time.year}/{the_time.month}/{the_time.day} {the_time.hour}:{the_time.minute}:{the_time.second}'
     customer_expiry_datetime.append(formatted_time)
-methods = ['card', 'cash']
+methods = ['Card', 'Cash']
 customer_payment_method = [choice(methods) for i in range(11)]
 time_now = datetime.now()
 time_now = f'{time_now.year}/{time_now.month}/{time_now.day} {time_now.hour}:{time_now.minute}:{time_now.second}'
@@ -76,6 +76,7 @@ def create_table_if_not_exist():
     """
     staff_table = """ CREATE TABLE IF NOT EXISTS Staff_Details (
         id INTEGER PRIMARY KEY autoincrement,
+        position VARCHAR(255) NOT NULL,
         staff_name VARCHAR(255) NOT NULL,
         staff_extension VARCHAR(255) NOT NULL,
         staff_email VARCHAR(255) NOT NULL
@@ -129,9 +130,9 @@ if not all_tables_are_created.fetchall():
         admin_password) VALUES(?,?)",
         (admin_username,hashed))
     for i in range(4):
-        cur.execute("INSERT INTO Staff_Details (staff_name,staff_extension,\
-            staff_email) VALUES(?,?,?)",
-            (names[i],extensions[i],emails[i]))
+        cur.execute("INSERT INTO Staff_Details (position, staff_name,staff_extension,\
+            staff_email) VALUES(?,?,?,?)",
+            (positions[i],names[i],extensions[i],emails[i]))
     for i in range(11):
         cur.execute("INSERT INTO Customer_Details (first_name,middle_name,last_name,contact_number,\
             email,customer_address,room_id,payment_method,transaction_datetime,expiry_datetime) VALUES(?,?,?,?,?,?,?,?,?,?)",
@@ -149,5 +150,7 @@ if not all_tables_are_created.fetchall():
 
     conn.commit()
 
-print('data inserted')
-print()
+
+print('done')
+
+

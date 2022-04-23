@@ -73,7 +73,7 @@ class Switch(root):
     def __init__(self):
         root.__init__(self)
         self._frame = None
-        self.switch_frame(AdminHotelCRM)
+        self.switch_frame(StartPage)
 
     def switch_frame(self, frame_class):
         new_frame = frame_class(self)
@@ -89,11 +89,6 @@ class StartPage(Frame):
         Frame.configure(self,bg='#fff')
         self.root = root
         self.root.title('Serenity Hotel')
-        #======= Bg Image ===============
-        # self.bg = Image.open('./images/aaa.jpg')
-        # self.bg = self.bg.resize((1366,768), Image.ANTIALIAS)
-        # self.bg = ImageTk.PhotoImage(self.bg)
-        # self.bg_image = Label(self.root,image=self.bg).place(x=0,y=0,relwidth=1,relheight=1)
         #======= Hotel Logo ===============
         self.bcg = Image.open('./images/hotel_logo.PNG')
         self.bcg = self.bcg.resize((120,100), Image.ANTIALIAS)
@@ -323,13 +318,6 @@ class AdminHotelCRM(Frame):
         self.delete_frames()
         self.staffs_frame.place(x=365,y=15)
         # ========= Hotel information form ===========
-        
-        # hotel_staff_form_frame = Frame(self.staffs_frame,width=750,height=290,relief='ridge',bg='cornsilk',bd=3)
-        # hotel_staff_form_frame.place(x=60,y=100)
-        # Label(hotel_staff_form_frame,font='montserrat 28',bg='teal',fg='#fff',
-        #     text='Edit staff information').place(anchor=CENTER,relx=0.5,rely=0.105)
-        # Label(hotel_staff_form_frame,font='montserrat 28',bg='cornsilk',fg='teal',
-        #     text='Edit staff information').place(anchor=CENTER,relx=0.5,rely=0.1)
         staff_details_query = cur.execute(f"SELECT staff_name, staff_extension, staff_email FROM Staff_Details").fetchall()
         manager_details = [i for i in staff_details_query[0]]
         chef_details = [i for i in staff_details_query[1]]
@@ -403,18 +391,6 @@ class AdminHotelCRM(Frame):
         names = [self.manager_name_edit.get(),self.chef_name_edit.get(),self.room_service_name_edit.get(),self.customer_service_name_edit.get()]
         extension = [self.manager_ext_edit.get(),self.chef_ext_edit.get(),self.room_service_ext_edit.get(),self.customer_service_ext_edit.get()]
         email = [self.manager_email_edit.get(),self.chef_email_edit.get(),self.room_service_email_edit.get(),self.customer_service_email_edit.get()]
-        # manager_name_edit = self.manager_name_edit.get()
-        # manager_ext_edit = self.manager_ext_edit.get()
-        # manager_email_edit = self.manager_email_edit.get()
-        # room_service_name_edit = self.room_service_name_edit.get()
-        # room_service_ext_edit = self.room_service_ext_edit.get()
-        # room_service_email_edit = self.room_service_email_edit.get()
-        # chef_name_edit = self.chef_name_edit.get()
-        # chef_ext_edit = self.chef_ext_edit.get()
-        # chef_email_edit = self.chef_email_edit.get()
-        # customer_service_name_edit = self.customer_service_name_edit.get()
-        # customer_service_ext_edit = self.customer_service_ext_edit.get()
-        # customer_service_email_edit = self.customer_service_email_edit.get()
         
         positions = ['Manager', 'Chef', 'Room Service', 'Customer Service']
         for i in range(4):
@@ -702,21 +678,18 @@ class HotelCRM(Frame):
         self.first_name.bind('<FocusOut>', out_click)
         self.middle_name.bind('<FocusOut>', out_click2)
         self.last_name.bind('<FocusOut>', out_click3)
-
         self.contact_number.bind('<FocusIn>', entry_click4)
         self.email.bind('<FocusIn>', entry_click5)
         self.address.bind('<FocusIn>', entry_click6)
         self.contact_number.bind('<FocusOut>', out_click4)
         self.email.bind('<FocusOut>', out_click5)
         self.address.bind('<FocusOut>', out_click6)
-
         self.children_number.bind('<FocusIn>', entry_click7)
         self.adult_number.bind('<FocusIn>', entry_click8)
         self.days_number.bind('<FocusIn>', entry_click9)
         self.children_number.bind('<FocusOut>', out_click7)
         self.adult_number.bind('<FocusOut>', out_click8)
         self.days_number.bind('<FocusOut>', out_click9)
-
         self.room_number.bind('<FocusIn>', entry_click10)
         self.room_number.bind('<FocusOut>', out_click10)
     
@@ -758,16 +731,12 @@ class HotelCRM(Frame):
             contact_no in ['Phone No. *'] or email in ['', 'Email *'] or address in ['', 'Address *'] or\
             children_no in ['', 'No. of Children *'] or adult_no in ['', 'No. of Adults *'] or\
             days_no in ['', 'No. of Days *'] or room_no in ['', 'Room No. *'] or pay_meth == 'Payment Method...':
-            # self.reservation_message.config(text='Please fill the form completely & correctly.',fg='red')
-            # self.reservation_message.place(anchor=CENTER,relx=0.5,rely=0.05)
             self.form_submit_result('incomplete form')
             return
         try:
             room_status = room_is_available[0]
             if room_status == "UNAVAILABLE":
                 raise TypeError
-            # self.reservation_message.config(text='Room in use. Please choose another.',fg='red')
-            # self.reservation_message.place(anchor=CENTER,relx=0.5,rely=0.05)
         except TypeError:
             self.form_submit_result('unavailable room')
             return
@@ -792,8 +761,6 @@ class HotelCRM(Frame):
             cur.execute("UPDATE Hotel_Details SET available_rooms=?, total_customers=?",
                 (str(value), total_cust))
             conn.commit()
-            # self.reservation_message.config(text='Room have been booked successfully.',fg='green')
-            # self.reservation_message.place(anchor=CENTER,relx=0.5,rely=0.05)
             self.form_submit_result('successful booking')
         except ValueError:
             self.form_submit_result('incomplete form')
@@ -838,21 +805,14 @@ class HotelCRM(Frame):
         for label in [self.show_room_id, self.show_bed, self.show_ac, self.show_tv,
             self.show_wifi, self.show_price, self.show_status,self.show_unavailability]:
             label.place_forget()
-        # Query database according to button press
-        # data = cur.execute(f"SELECT * FROM Room_Details WHERE id='{button}'").fetchall()
-        # pressed_room = [['1','3',"YES", "YES","YES", '5000', "Available"],'another']
+        # Get data from the database query
         pressed_room = [i for i in self.hotel_rooms_query if i[0] == button]
-        # print(test)
         no_of_beds = pressed_room[0][1]
         avail_ac = pressed_room[0][2]
         avail_tv = pressed_room[0][3]
         avail_wifi = pressed_room[0][4]
         room_price = pressed_room[0][5]
         room_available = pressed_room[0][6]
-        # # room_available = data[0][6]
-        # room_available = pressed_room[0][6]
-        # # available_choice = ['Available', 'busy']
-        # # room_available = choice(available_choice)
         
         # if staff presses available button, show room details else show unavailable
         if room_available == 'AVAILABLE':
@@ -868,8 +828,6 @@ class HotelCRM(Frame):
             self.show_wifi.place(x=240,y=110)
             self.show_price.config(text=f'${room_price}',font='montserrat 42')
             self.show_price.place(x=435,y=60)
-            # self.show_status.config(text=f'Available?: {room_available}',fg='green')
-            # self.show_status.place(x=205,y=122)
         else:
             self.show_unavailability.config(text="UNAVAILABLE",font='montserrat 36',fg='#dd4735')
             self.show_unavailability.place(anchor=CENTER,relx=0.5,rely=0.5)
@@ -977,21 +935,16 @@ class HotelCRM(Frame):
         #======= variables ===============
         hotel_staffs_query = cur.execute(f"SELECT staff_name, staff_extension, staff_email\
              FROM Staff_Details").fetchall()
-        # print(hotel_staffs_query)
-        # print()
-        
+                
         manager_name = hotel_staffs_query[0][0]
         manager_extension = hotel_staffs_query[0][1]
         manager_email = hotel_staffs_query[0][2]
-        
         chef_name = hotel_staffs_query[1][0]
         chef_extension = hotel_staffs_query[1][1]
         chef_email = hotel_staffs_query[1][2]
-        
         room_service_name = hotel_staffs_query[2][0]
         room_service_extension = hotel_staffs_query[2][1]
         room_service_email = hotel_staffs_query[2][2]
-        
         customer_service_name = hotel_staffs_query[3][0]
         customer_service_extension = hotel_staffs_query[3][1]
         customer_service_email = hotel_staffs_query[3][2]
@@ -1067,8 +1020,8 @@ class HotelCRM(Frame):
 
 if __name__ == '__main__':
     app = Switch()
-    app.state('zoomed')
-    # app.attributes('-fullscreen', True)
+    # app.state('zoomed') # Keep the scree to fullscreen with minimize and close option
+    app.attributes('-fullscreen', True) # Fullscreen without close and minimize option
     ico = Image.open('./images/hotel_logo.PNG')
     photo = ImageTk.PhotoImage(ico)
     app.wm_iconphoto(False, photo)
