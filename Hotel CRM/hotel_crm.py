@@ -1,12 +1,12 @@
 from datetime import datetime, timedelta
 import sqlite3
+import bcrypt
 from tkinter import *
 from tkinter import ttk
 from PIL import Image, ImageTk
 from random import choice
 
 root = Tk
-current_user = 'STAFF'
 
 #============= Initialize Database ===================
 conn = sqlite3.connect('hotel_crm.db')
@@ -73,7 +73,7 @@ class Switch(root):
     def __init__(self):
         root.__init__(self)
         self._frame = None
-        self.switch_frame(HotelCRM)
+        self.switch_frame(AdminHotelCRM)
 
     def switch_frame(self, frame_class):
         new_frame = frame_class(self)
@@ -90,7 +90,7 @@ class StartPage(Frame):
         self.root = root
         self.root.title('Serenity Hotel')
         #======= Bg Image ===============
-        # self.bg = Image.open('./images/logo.jpg')
+        # self.bg = Image.open('./images/aaa.jpg')
         # self.bg = self.bg.resize((1366,768), Image.ANTIALIAS)
         # self.bg = ImageTk.PhotoImage(self.bg)
         # self.bg_image = Label(self.root,image=self.bg).place(x=0,y=0,relwidth=1,relheight=1)
@@ -140,19 +140,24 @@ class AdminLogin(Frame):
             justify=CENTER,width=25,fg='#fff')
         self.pasEnter.place(anchor=CENTER,relx=0.5,rely=0.67)
         self.pasEnter.bind('<Return>', lambda dummy=0: self.check_credentials())
+        self.login_status = Label(text='Wrong credentials. Try again.',font='montserrat 14',
+                bg='#fff',fg='#dd4735')
         self.go_back_button = Button(self.master,text='GO BACK',font='montserrat 14',bd=0,width=15,fg='white',bg='teal',
             command=lambda:self.master.switch_frame(StartPage))
         self.go_back_button.place(x=45,y=680)
         
     def check_credentials(self):
-        global current_user
-        username, password = self.username.get(), self.password
-        # user = cur.execute(f"SELECT username FROM AdminUsers WHERE username='{username}'")
-        # check = [i[0] for i in user]
-        # passw = cur.execute(f"SELECT password FROM Users WHERE username='{user_entry}'")
-        print('enter db to find out...')
-        current_user = 'STAFF'
-        self.master.switch_frame(AdminHotelCRM)
+        username, password = self.username.get(), self.password.get()
+        admin_detail_query = cur.execute(f"SELECT admin_username, admin_password\
+            FROM Admin_Details WHERE admin_username='{username}'").fetchone()
+        try:
+            admin_name, admin_password = admin_detail_query[0], admin_detail_query[1]
+            if username == admin_name and bcrypt.checkpw(bytes(password,'utf-8'), admin_password):
+                self.master.switch_frame(AdminHotelCRM)
+            raise TypeError
+        except TypeError:
+            self.login_status.place(anchor=CENTER,relx=0.5,rely=0.72)
+            self.useEnter.focus()
 
 
 class AdminHotelCRM(Frame):
@@ -188,7 +193,7 @@ class AdminHotelCRM(Frame):
         self.buttons = [self.status,self.rooms,self.staffs]
         self.all_frames = [self.status_frame,self.staffs_frame,self.rooms_frame]
         
-        self.rooms_section()
+        self.staffs_section()
                 
     def status_section(self):
         self.change_look(self.status)
@@ -212,40 +217,99 @@ class AdminHotelCRM(Frame):
         self.admin_staff_number = Entry(hotel_info_form_frame,bg='#dadada',fg='#222',font='montserrat 12',width=19)
         self.admin_staff_number.place(x=400,y=150)
         
+        self.update_status = Label(self.status_frame,font='montserrat 16',bg='cornsilk')
         Button(self.status_frame,command=self.save_hotel_status_edit,width=50,text='Save hotel information',
             fg='#fff',bg='#dd4735',font='montserrat 16').place(anchor=CENTER,relx=0.5,rely=0.75)
     
     def save_hotel_status_edit(self):
         admin_total_rooms = self.admin_total_rooms.get()
         admin_staff_number = self.admin_staff_number.get()
-        print(admin_total_rooms)
-        print(admin_staff_number)
-        print('saving hotel info...')
-        print('saved')
+        try:
+            int_room, int_staff = int(admin_total_rooms), int(admin_staff_number)
+            cur.execute("UPDATE Hotel_Details SET total_rooms=?, total_staff=?",
+                    (admin_total_rooms, admin_staff_number))
+            conn.commit()
+            self.update_status.config(text='Hotel details successfully upadated.',fg='green')
+            self.update_status.place(anchor=CENTER,relx=0.5,rely=0.2)
+        except ValueError:
+            self.update_status.config(text='Wrong input. Check and correct them.',fg='#dd4735')
+            self.update_status.place(anchor=CENTER,relx=0.5,rely=0.2)
     
     def rooms_section(self):
         self.change_look(self.rooms)
         self.delete_frames()
         self.rooms_frame.place(x=365,y=15)
         # ======= Variables ==========
+        the_time = datetime.now()
+        current_datetime = f'{the_time.year}/{the_time.month}/{the_time.day} {the_time.hour}:{the_time.minute}:{the_time.second}'
+        customer_query = cur.execute(f"SELECT first_name, last_name, room_id, payment_method,\
+            transaction_datetime, expiry_datetime, id FROM Customer_Details WHERE expiry_datetime <= '{current_datetime}'").fetchall()
+        self.expired_rooms = {}
+        for customer in customer_query:
+            customer_key = int(customer[2])
+            self.expired_rooms[customer_key] = [customer[0], customer[1], customer[3], customer[4], customer[5], customer[6]]
+            
         x_coordinates = [67, 217, 367, 517, 667]
-        y_coordinates = [120, 200, 280, 360]
-        """set availabily from database"""
-        available_choice = ['available', 'busy']
-        available = [choice(available_choice) for i in range(20)]
+        y_coordinates = [15, 85, 155, 225]
         # ======= Get rooms ==========
-        button_count = 0
+        button_count = 1
         for y_coord in y_coordinates:
             for x_coord in x_coordinates:
-                if available[button_count] == "available":
-                    button_count += 1
-                    but = Button(self.rooms_frame,text=f'Room {button_count}',font='montserrat 16',fg='#fff',
-                        bg='teal',width=9,relief='groove',bd=0)
-                else:
-                    button_count += 1
+                if button_count in self.expired_rooms:
                     but = Button(self.rooms_frame,text=f'Room {button_count}',font='montserrat 16',fg='#fff',
                         bg='#dd4735',width=9,relief='groove',bd=0)
+                else:
+                    but = Button(self.rooms_frame,text=f'Room {button_count}',font='montserrat 16',fg='#fff',
+                        bg='teal',width=9,relief='groove',bd=0)
+                but.config(command=lambda but=button_count: self.show_room_details(but))
                 but.place(x=x_coord,y=y_coord)
+                button_count += 1
+        
+        show_room_details = Frame(self.rooms_frame,width=750,height=250,relief='ridge',bg='cornsilk',bd=3)
+        show_room_details.place(anchor=CENTER,relx=0.5,rely=0.75)
+        
+        self.update_room = Button(show_room_details,text='Set room to available',fg='#fff',
+            bg='#dd4735',width=25,font='montserrat 16',command=self.set_room_to_available)
+        self.currently_occupied = Label(show_room_details,text="CURRENLY OCCUPIED OR AVAILABLE",font='montserrat 24',
+            fg='green',bg='cornsilk')
+        self.show_room_id = Label(show_room_details,bg='cornsilk',fg='#dd4735')
+        self.show_current_occupant = Label(show_room_details,font='montserrat 16',bg='cornsilk',fg='teal')
+        self.show_dates = Label(show_room_details,font='montserrat 16',bg='cornsilk',fg='teal')
+        self.payment_meth = Label(show_room_details,font='montserrat 16',bg='cornsilk',fg='teal')
+    
+    def set_room_to_available(self):
+        the_time = datetime.now() + timedelta(days=360)
+        new_expiry_date = f'{the_time.year}/{the_time.month}/{the_time.day} {the_time.hour}:{the_time.minute}:{the_time.second}'
+        
+        cur.execute("UPDATE Room_Details SET room_status=? WHERE id=?",
+            ('AVAILABLE', self.expired_room_num_pressed))
+        cur.execute("UPDATE Customer_Details SET expiry_datetime=? WHERE id=?",
+            (new_expiry_date, self.expired_room_id_pressed))
+        conn.commit()
+        
+    def show_room_details(self, btn):
+        self.expired_room_num_pressed = btn
+        for label in [self.show_room_id, self.show_current_occupant, self.show_dates, self.currently_occupied,
+                      self.update_room, self.payment_meth]:
+            label.place_forget()
+        get_room_from_expired_rooms = self.expired_rooms.get(btn, None)
+        self.expired_room_id_pressed = get_room_from_expired_rooms[5]
+        if get_room_from_expired_rooms != None:
+            occupant = get_room_from_expired_rooms[0] + ' ' + get_room_from_expired_rooms[1]
+            payment_meth = get_room_from_expired_rooms[2]
+            date_logged = get_room_from_expired_rooms[3]
+            expired_date = get_room_from_expired_rooms[4]
+            self.show_room_id.config(text=f'Room NO: {btn}',font='montserrat 18 bold')
+            self.show_room_id.place(x=40,y=10)
+            self.show_current_occupant.config(text=f'Occupant: {occupant}')
+            self.show_current_occupant.place(x=40,y=50)
+            self.show_dates.config(text=f'From: {date_logged} To: {expired_date}')
+            self.show_dates.place(x=40,y=90)
+            self.payment_meth.config(text=f'Payment Method: {payment_meth}')
+            self.payment_meth.place(x=40,y=130)
+            self.update_room.place(x=40,y=170)
+        else:
+            self.currently_occupied.place(anchor=CENTER,relx=0.5,rely=0.5)
     
     def staffs_section(self):
         self.change_look(self.staffs)
@@ -283,6 +347,7 @@ class AdminHotelCRM(Frame):
         self.admin_customer_service_edit.insert(0, "Customer's name")
         self.admin_customer_service_edit.place(x=320,y=230)
         
+        self.staff_details_update_status = Label(self.staffs_frame,font='montserrat 18',bg='cornsilk')
         Button(self.staffs_frame,command=self.save_hotel_staff_details,width=50,text='Save staff information',
             fg='#fff',bg='#dd4735',font='montserrat 16').place(anchor=CENTER,relx=0.5,rely=0.78)
 
@@ -295,6 +360,9 @@ class AdminHotelCRM(Frame):
         print(admin_chef_edit)
         print(admin_room_service_edit)
         print(admin_customer_service_edit)
+        
+        self.staff_details_update_status.config(text='Staff details successfully updated.',fg='green')
+        self.staff_details_update_status.place(anchor=CENTER,relx=0.5,rely=0.1)
         print('saving to db...')
         print('saved')
     
@@ -308,8 +376,6 @@ class AdminHotelCRM(Frame):
             frame.place_forget()
         
     def logout_section(self):
-        global current_user
-        current_user = 'STAFF'
         self.master.switch_frame(StartPage)
     
     def display_sidebar(self):
