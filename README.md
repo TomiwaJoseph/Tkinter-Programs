@@ -65,8 +65,18 @@ The age long game of x-es and o-ohs. It has a play AI version and a play a frien
 
 ## No. 8 - Sudoku
 
-The famous sudoku in three versions. An easy 4x4 version, my wierd version (6x6) and the hard 9x9 version. You just have to try out the wierd version if you have to. Enjoy.
+The famous sudoku in three versions. An easy 4x4 version, my wierd version (6x6) and the popular (hard) 9x9 version. You just have to try out the wierd version😍 Enjoy.
 
 ## No. 9 - Hotel CRM
 
-A hotel customer relationship manager (CRM) for a make shift hotel - SERENITY. I don't know how a hotel management system really looks like in real life, so bear with me 😅.
+A hotel customer relationship manager (CRM) for a make shift hotel - SERENITY. I don't know how a hotel management system really looks like in real life, so bear with me 😅. It has an admin page where he oversees the hotel management and a staff feature for the reservation. Features of the app:
+
+Admin
+
+- Can change hotel details like how many staffs the hotel has, the names of heads of major sections of the hotel, their extensions (phone line) and stuff.
+- Oversees the rooms and get notified when a room time allotment has expired.
+
+Staff
+
+- Can filter rooms based on client's preference
+- Can reserve rooms for clients.
