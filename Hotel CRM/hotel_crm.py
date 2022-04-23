@@ -21,6 +21,7 @@ def create_table_if_not_exist():
     """
     staff_table = """ CREATE TABLE IF NOT EXISTS Staff_Details (
         id INTEGER PRIMARY KEY autoincrement,
+        position VARCHAR(255) NOT NULL,
         staff_name VARCHAR(255) NOT NULL,
         staff_extension VARCHAR(255) NOT NULL,
         staff_email VARCHAR(255) NOT NULL
@@ -67,7 +68,6 @@ def create_table_if_not_exist():
 all_tables_are_created = cur.execute("SELECT name FROM sqlite_master where type='table'")
 if not all_tables_are_created.fetchall():
     create_table_if_not_exist()
-
 
 class Switch(root):
     def __init__(self):
@@ -189,11 +189,13 @@ class AdminHotelCRM(Frame):
             height=560,bg='cornsilk',bd=5)
         self.reservation_frame = Frame(self.utils,borderwidth=2,relief='ridge',width=880,
             height=560,bg='cornsilk',bd=5)
+        
+        self.staff_details_update_status = Label(self.staffs_frame,font='montserrat 18',bg='cornsilk')
         # ======== Other variables ================
         self.buttons = [self.status,self.rooms,self.staffs]
-        self.all_frames = [self.status_frame,self.staffs_frame,self.rooms_frame]
+        self.all_frames = [self.status_frame,self.staffs_frame,self.rooms_frame,self.staff_details_update_status]
         
-        self.staffs_section()
+        self.rooms_section()
                 
     def status_section(self):
         self.change_look(self.status)
@@ -208,13 +210,15 @@ class AdminHotelCRM(Frame):
             text='Edit hotel information').place(anchor=CENTER,relx=0.5,rely=0.2)
 
         Label(hotel_info_form_frame,text='Total rooms:',font='montserrat 20',
-            bg='cornsilk',fg='teal').place(x=100,y=90)
-        self.admin_total_rooms = Entry(hotel_info_form_frame,bg='#dadada',fg='#222',font='montserrat 12',width=30)
+            bg='cornsilk',fg='#dd4735').place(x=100,y=90)
+        self.admin_total_rooms = Entry(hotel_info_form_frame,bg='#dadada',fg='#222',font='montserrat 12',
+            bd=3,relief='groove',width=30)
         self.admin_total_rooms.place(x=280,y=100)
         
         Label(hotel_info_form_frame,text='Total number of staff:',font='montserrat 20',
-            bg='cornsilk',fg='teal').place(x=100,y=140)
-        self.admin_staff_number = Entry(hotel_info_form_frame,bg='#dadada',fg='#222',font='montserrat 12',width=19)
+            bg='cornsilk',fg='#dd4735').place(x=100,y=140)
+        self.admin_staff_number = Entry(hotel_info_form_frame,bg='#dadada',fg='#222',font='montserrat 12',
+            bd=3,relief='groove',width=19)
         self.admin_staff_number.place(x=400,y=150)
         
         self.update_status = Label(self.status_frame,font='montserrat 16',bg='cornsilk')
@@ -280,11 +284,14 @@ class AdminHotelCRM(Frame):
     def set_room_to_available(self):
         the_time = datetime.now() + timedelta(days=360)
         new_expiry_date = f'{the_time.year}/{the_time.month}/{the_time.day} {the_time.hour}:{the_time.minute}:{the_time.second}'
-        
+        hotel_status_query = cur.execute(f"SELECT available_rooms FROM Hotel_Details").fetchone()
+        value = int(hotel_status_query[0]) + 1
         cur.execute("UPDATE Room_Details SET room_status=? WHERE id=?",
             ('AVAILABLE', self.expired_room_num_pressed))
         cur.execute("UPDATE Customer_Details SET expiry_datetime=? WHERE id=?",
             (new_expiry_date, self.expired_room_id_pressed))
+        cur.execute("UPDATE Hotel_Details SET available_rooms=?",
+                (str(value),))
         conn.commit()
         
     def show_room_details(self, btn):
@@ -293,8 +300,8 @@ class AdminHotelCRM(Frame):
                       self.update_room, self.payment_meth]:
             label.place_forget()
         get_room_from_expired_rooms = self.expired_rooms.get(btn, None)
-        self.expired_room_id_pressed = get_room_from_expired_rooms[5]
         if get_room_from_expired_rooms != None:
+            self.expired_room_id_pressed = get_room_from_expired_rooms[5]
             occupant = get_room_from_expired_rooms[0] + ' ' + get_room_from_expired_rooms[1]
             payment_meth = get_room_from_expired_rooms[2]
             date_logged = get_room_from_expired_rooms[3]
@@ -315,56 +322,108 @@ class AdminHotelCRM(Frame):
         self.change_look(self.staffs)
         self.delete_frames()
         self.staffs_frame.place(x=365,y=15)
-                # ========= Hotel information form ===========
-        hotel_staff_form_frame = Frame(self.staffs_frame,width=750,height=290,relief='ridge',bg='cornsilk',bd=3)
-        hotel_staff_form_frame.place(x=60,y=100)
-        Label(hotel_staff_form_frame,font='montserrat 28',bg='teal',fg='#fff',
-            text='Edit staff information').place(anchor=CENTER,relx=0.5,rely=0.105)
-        Label(hotel_staff_form_frame,font='montserrat 28',bg='cornsilk',fg='teal',
-            text='Edit staff information').place(anchor=CENTER,relx=0.5,rely=0.1)
-
-        Label(hotel_staff_form_frame,text="Manager:",font='montserrat 20',
-            bg='cornsilk',fg='teal').place(x=60,y=70)
-        self.admin_manager_edit = Entry(hotel_staff_form_frame,bg='#dadada',fg='#222',font='montserrat 14',width=35)
-        self.admin_manager_edit.insert(0, "Manager's name")
-        self.admin_manager_edit.place(x=200,y=80)
+        # ========= Hotel information form ===========
         
-        Label(hotel_staff_form_frame,text="Chef:",font='montserrat 20',
-            bg='cornsilk',fg='teal').place(x=60,y=120)
-        self.admin_chef_edit = Entry(hotel_staff_form_frame,bg='#dadada',fg='#222',font='montserrat 14',width=40)
-        self.admin_chef_edit.insert(0, "Chef's name")
-        self.admin_chef_edit.place(x=140,y=130)
+        # hotel_staff_form_frame = Frame(self.staffs_frame,width=750,height=290,relief='ridge',bg='cornsilk',bd=3)
+        # hotel_staff_form_frame.place(x=60,y=100)
+        # Label(hotel_staff_form_frame,font='montserrat 28',bg='teal',fg='#fff',
+        #     text='Edit staff information').place(anchor=CENTER,relx=0.5,rely=0.105)
+        # Label(hotel_staff_form_frame,font='montserrat 28',bg='cornsilk',fg='teal',
+        #     text='Edit staff information').place(anchor=CENTER,relx=0.5,rely=0.1)
+        staff_details_query = cur.execute(f"SELECT staff_name, staff_extension, staff_email FROM Staff_Details").fetchall()
+        manager_details = [i for i in staff_details_query[0]]
+        chef_details = [i for i in staff_details_query[1]]
+        room_service_details = [i for i in staff_details_query[2]]
+        customer_service_details = [i for i in staff_details_query[3]]
         
-        Label(hotel_staff_form_frame,text="Room Service:",font='montserrat 20',
-            bg='cornsilk',fg='teal').place(x=60,y=170)
-        self.admin_room_service_edit = Entry(hotel_staff_form_frame,bg='#dadada',fg='#222',font='montserrat 14',width=30)
-        self.admin_room_service_edit.insert(0, "Room service's name")
-        self.admin_room_service_edit.place(x=270,y=180)
+        Label(self.staffs_frame,text="Manager",font='montserrat 18',
+            bg='cornsilk',fg='#dd4735').place(x=165,y=55)
+        self.manager_name_edit = Entry(self.staffs_frame,bg='#dadada',fg='#222',font='montserrat 14',
+            justify=CENTER,relief='groove',bd=3,width=25)
+        self.manager_name_edit.insert(0, manager_details[0])
+        self.manager_name_edit.place(x=65,y=100)
+        self.manager_ext_edit = Entry(self.staffs_frame,bg='#dadada',fg='#222',font='montserrat 14',
+          justify=CENTER,relief='groove',bd=3,width=25)
+        self.manager_ext_edit.insert(0, manager_details[1])
+        self.manager_ext_edit.place(x=65,y=140)
+        self.manager_email_edit = Entry(self.staffs_frame,bg='#dadada',fg='#222',font='montserrat 14',
+          justify=CENTER,relief='groove',bd=3,width=25)
+        self.manager_email_edit.insert(0, manager_details[2])
+        self.manager_email_edit.place(x=65,y=180)
         
-        Label(hotel_staff_form_frame,text="Customer Service:",font='montserrat 20',
-            bg='cornsilk',fg='teal').place(x=60,y=220)
-        self.admin_customer_service_edit = Entry(hotel_staff_form_frame,bg='#dadada',fg='#222',font='montserrat 14',width=26)
-        self.admin_customer_service_edit.insert(0, "Customer's name")
-        self.admin_customer_service_edit.place(x=320,y=230)
+        Label(self.staffs_frame,text="Room Service",font='montserrat 18',
+            bg='cornsilk',fg='#dd4735').place(x=145,y=250)
+        self.room_service_name_edit = Entry(self.staffs_frame,bg='#dadada',fg='#222',font='montserrat 14',
+            justify=CENTER,relief='groove',bd=3,width=25)
+        self.room_service_name_edit.insert(0, room_service_details[0])
+        self.room_service_name_edit.place(x=65,y=300)
+        self.room_service_ext_edit = Entry(self.staffs_frame,bg='#dadada',fg='#222',font='montserrat 14',
+          justify=CENTER,relief='groove',bd=3,width=25)
+        self.room_service_ext_edit.insert(0, room_service_details[1])
+        self.room_service_ext_edit.place(x=65,y=340)
+        self.room_service_email_edit = Entry(self.staffs_frame,bg='#dadada',fg='#222',font='montserrat 14',
+          justify=CENTER,relief='groove',bd=3,width=25)
+        self.room_service_email_edit.insert(0, room_service_details[2])
+        self.room_service_email_edit.place(x=65,y=380)
         
-        self.staff_details_update_status = Label(self.staffs_frame,font='montserrat 18',bg='cornsilk')
+        Label(self.staffs_frame,text="Chef",font='montserrat 18',
+            bg='cornsilk',fg='#dd4735').place(x=600,y=55)
+        self.chef_name_edit = Entry(self.staffs_frame,bg='#dadada',fg='#222',font='montserrat 14',
+            justify=CENTER,relief='groove',bd=3,width=25)
+        self.chef_name_edit.insert(0, chef_details[0])
+        self.chef_name_edit.place(x=470,y=100)
+        self.chef_ext_edit = Entry(self.staffs_frame,bg='#dadada',fg='#222',font='montserrat 14',
+          justify=CENTER,relief='groove',bd=3,width=25)
+        self.chef_ext_edit.insert(0, chef_details[1])
+        self.chef_ext_edit.place(x=470,y=140)
+        self.chef_email_edit = Entry(self.staffs_frame,bg='#dadada',fg='#222',font='montserrat 14',
+          justify=CENTER,relief='groove',bd=3,width=25)
+        self.chef_email_edit.insert(0, chef_details[2])
+        self.chef_email_edit.place(x=470,y=180)
+        
+        Label(self.staffs_frame,text="Customer Service",font='montserrat 18',
+            bg='cornsilk',fg='#dd4735').place(x=525,y=250)
+        self.customer_service_name_edit = Entry(self.staffs_frame,bg='#dadada',fg='#222',font='montserrat 14',
+            justify=CENTER,relief='groove',bd=3,width=25)
+        self.customer_service_name_edit.insert(0, customer_service_details[0])
+        self.customer_service_name_edit.place(x=470,y=300)
+        self.customer_service_ext_edit = Entry(self.staffs_frame,bg='#dadada',fg='#222',font='montserrat 14',
+          justify=CENTER,relief='groove',bd=3,width=25)
+        self.customer_service_ext_edit.insert(0, customer_service_details[1])
+        self.customer_service_ext_edit.place(x=470,y=340)
+        self.customer_service_email_edit = Entry(self.staffs_frame,bg='#dadada',fg='#222',font='montserrat 14',
+          justify=CENTER,relief='groove',bd=3,width=25)
+        self.customer_service_email_edit.insert(0, customer_service_details[2])
+        self.customer_service_email_edit.place(x=470,y=380)
+                
         Button(self.staffs_frame,command=self.save_hotel_staff_details,width=50,text='Save staff information',
-            fg='#fff',bg='#dd4735',font='montserrat 16').place(anchor=CENTER,relx=0.5,rely=0.78)
+            fg='#fff',bg='#dd4735',font='montserrat 16').place(anchor=CENTER,relx=0.5,rely=0.87)
 
     def save_hotel_staff_details(self):
-        admin_manager_edit = self.admin_manager_edit.get()
-        admin_chef_edit = self.admin_chef_edit.get()
-        admin_room_service_edit = self.admin_room_service_edit.get()
-        admin_customer_service_edit = self.admin_customer_service_edit.get()
-        print(admin_manager_edit)
-        print(admin_chef_edit)
-        print(admin_room_service_edit)
-        print(admin_customer_service_edit)
+        names = [self.manager_name_edit.get(),self.chef_name_edit.get(),self.room_service_name_edit.get(),self.customer_service_name_edit.get()]
+        extension = [self.manager_ext_edit.get(),self.chef_ext_edit.get(),self.room_service_ext_edit.get(),self.customer_service_ext_edit.get()]
+        email = [self.manager_email_edit.get(),self.chef_email_edit.get(),self.room_service_email_edit.get(),self.customer_service_email_edit.get()]
+        # manager_name_edit = self.manager_name_edit.get()
+        # manager_ext_edit = self.manager_ext_edit.get()
+        # manager_email_edit = self.manager_email_edit.get()
+        # room_service_name_edit = self.room_service_name_edit.get()
+        # room_service_ext_edit = self.room_service_ext_edit.get()
+        # room_service_email_edit = self.room_service_email_edit.get()
+        # chef_name_edit = self.chef_name_edit.get()
+        # chef_ext_edit = self.chef_ext_edit.get()
+        # chef_email_edit = self.chef_email_edit.get()
+        # customer_service_name_edit = self.customer_service_name_edit.get()
+        # customer_service_ext_edit = self.customer_service_ext_edit.get()
+        # customer_service_email_edit = self.customer_service_email_edit.get()
+        
+        positions = ['Manager', 'Chef', 'Room Service', 'Customer Service']
+        for i in range(4):
+            cur.execute("UPDATE Staff_Details SET staff_name=?, staff_extension=?, staff_email=? WHERE position=?",
+                (names[i], extension[i], email[i], positions[i]))
+        conn.commit()
         
         self.staff_details_update_status.config(text='Staff details successfully updated.',fg='green')
-        self.staff_details_update_status.place(anchor=CENTER,relx=0.5,rely=0.1)
-        print('saving to db...')
-        print('saved')
+        self.staff_details_update_status.place(anchor=CENTER,relx=0.5,rely=0.05)
     
     def change_look(self, button):
         for but in self.buttons:
@@ -918,6 +977,8 @@ class HotelCRM(Frame):
         #======= variables ===============
         hotel_staffs_query = cur.execute(f"SELECT staff_name, staff_extension, staff_email\
              FROM Staff_Details").fetchall()
+        # print(hotel_staffs_query)
+        # print()
         
         manager_name = hotel_staffs_query[0][0]
         manager_extension = hotel_staffs_query[0][1]
@@ -1013,4 +1074,3 @@ if __name__ == '__main__':
     app.wm_iconphoto(False, photo)
     app.mainloop()
     
-#reservation to check room details if expired
