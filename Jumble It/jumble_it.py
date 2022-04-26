@@ -244,7 +244,6 @@ class Jumble(Frame):
                     shuffled.append(form)
                     self.rearrange = ''.join(shuffled)
                     break
-        print(self.current_word)
         self.jumbled.config(text=self.rearrange)
         self.user_entry.focus()
 
