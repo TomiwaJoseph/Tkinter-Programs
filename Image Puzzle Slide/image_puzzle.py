@@ -147,6 +147,11 @@ class MainPage(Frame):
         self.root = root
         self.root.title('Image Puzzle')
         self.root.resizable(0,0)
+        #========= Info about Game ==============
+        self.menubar = Menu()
+        self.filemenu = Menu(self.menubar,tearoff=0)
+        self.menubar.add_cascade(label='About Game',command=self.about_game)
+        self.root.config(menu=self.menubar)
         #======== Back Button ============
         self.the_image = PhotoImage(file='./static/back_arrow.png')
         self.back = self.the_image.subsample(1,1)
@@ -164,6 +169,17 @@ class MainPage(Frame):
         self.create_events() 
         self.create_board() 
         self.show()
+        
+    def about_game(self):
+        newWindow = Toplevel(self.root)
+        newWindow.attributes('-topmost', 'true')
+        newWindow.title('About Game')
+        newWindow.config(bg='#222')
+        newWindow.geometry('430x260')
+        newWindow.resizable(0,0)
+        the_text = '''\nWelcome player!\n\nGAMEPLAY\nUse UP⬆, DOWN⬇,\nLEFT⬅ and RIGHT➡ to move tiles \nEnjoy😎!'''
+        Label(newWindow,text=the_text,fg='#fff',bg='#222',
+              font='montserrat 14').pack(pady=(20,5))
         
     def load_image(self, image): 
         image = Image.open(image) 
@@ -289,6 +305,6 @@ class MainPage(Frame):
         
 if __name__ == '__main__':
     app = Switch()
-    app.state('zoomed')
-    # app.attributes('-fullscreen', True)
+    # app.state('zoomed') # Fullscreen with minimize and maximize button
+    app.attributes('-fullscreen', True) # Fullscreen without minimize and maximize button
     app.mainloop()
