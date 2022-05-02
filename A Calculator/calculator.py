@@ -109,7 +109,6 @@ class MainPage(Frame):
         self.calculation = ''
     
     def do_the_calculation(self, btn):
-        print(self.calculation)
         if btn['text'] == '=' and self.calculation == '':
             return
         elif btn['text'] == '=' and self.calculation.startswith('÷'):
