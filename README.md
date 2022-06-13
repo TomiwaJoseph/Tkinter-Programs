@@ -39,8 +39,20 @@ A fun variation of the 15 slide puzzle which utilizes an image instead of number
 - Select the number of grid you want eg. 3x3 or 4x4
 - Select the image you want scrambled.
 - Start arranging the scrambled image.
-- Feature to see the full image (check the help section of the game)
+- Feature to see the full image (check the help section of the game).
 - Enjoy the game.
+
+## No. 4 - PlayIt
+
+A simple but powerful audio player. It has the following features:
+
+- Play, pause, next, previous funtionality
+- Shuffle, repeat one, repeat all buttons
+- Playlist view
+- Shortcuts for easy usage experience...
+- ...and more
+- In short, it works.
+- Enjoy!
 
 ## No. 4 - Chess Clock
 ![bandicam 2022-05-02 22-41-52-978](https://user-images.githubusercontent.com/67712127/166341999-9e396c70-fa92-4118-971c-997651aef15c.png)
