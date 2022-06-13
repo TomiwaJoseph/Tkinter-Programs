@@ -85,7 +85,7 @@ class MainPage(Frame):
         self.six.place(x=164,y=260)
         self.nine = Button(text='9',font='candara 24',fg='teal',width=4,command=lambda: self.button_click(self.nine))
         self.nine.place(x=164,y=190)
-        self.back = Button(text='←',font='candara 24',fg='teal',width=4,command=lambda:self.remove_last_input(self.back))
+        self.back = Button(text=u'\u2190',font='candara 24',fg='teal',width=4,command=lambda:self.remove_last_input(self.back))
         self.back.place(x=164,y=120)
 
         self.eval = Button(text='=',bd=0,font='candara 24',fg='teal',width=4,command=lambda: self.do_the_calculation(self.eval))
