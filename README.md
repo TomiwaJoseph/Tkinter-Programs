@@ -43,14 +43,14 @@ A fun variation of the 15 slide puzzle which utilizes an image instead of number
 - Enjoy the game.
 
 ## No. 4 - PlayIt
+![v2_2](https://user-images.githubusercontent.com/67712127/173365462-53ada69c-3a5d-4c4b-baa8-849b96ae315d.png)
 
 A simple but powerful audio player. It has the following features:
 
 - Play, pause, next, previous funtionality
 - Shuffle, repeat one, repeat all buttons
 - Playlist view
-- Shortcuts for easy usage experience...
-- ...and more
+- Shortcuts for easy usage experience...and more.
 - In short, it works.
 - Enjoy!
 
