@@ -1,0 +1,5 @@
+# Font
+Raleway
+
+# Dependencies
+Pillow==8.4.0
