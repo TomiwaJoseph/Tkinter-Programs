@@ -51,7 +51,7 @@ A fun variation of the 15 slide puzzle which utilizes an image instead of number
 ![bandicam 2022-09-21 20-32-19-072](https://user-images.githubusercontent.com/67712127/191598239-62db37e4-4759-4774-868b-650898ea64f7.jpg)
 
 
-A simple image viewer and time for artists like me who might like to have timed drawing sessions. Its working is simple:
+A simple image viewer and timer for artists like me who might like to have timed drawing sessions. Its working is simple:
 
 - Select the images you want to draw or sketch
 - Select the time you want for each image to lapse
