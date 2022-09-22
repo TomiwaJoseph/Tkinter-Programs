@@ -6,7 +6,8 @@ This repository contains graphic user interfaces (GUIs) made with the python lib
 
 ## No. 1 - Hotel CRM
 
-![bandicam 2022-05-02 22-28-55-893](https://user-images.githubusercontent.com/67712127/166341790-5782434b-e6d7-42fa-9709-8aa999022447.png)
+![bandicam 2022-09-22 09-46-12-564](https://user-images.githubusercontent.com/67712127/191704039-f40d0699-9e5a-4c52-b753-de9332e9f5ce.jpg)
+
 
 A hotel customer relationship manager (CRM) for a make shift hotel - SERENITY. I don't know how a hotel management system really looks like in real life, so bear with me 😅. It has an admin page where he oversees the hotel management and a staff feature for the reservation. Features of the app:
 
@@ -36,7 +37,7 @@ A more fun variation of the hangman game. In this version, you don't hang, inste
 
 ## No. 3 - Image Puzzle Slide
 
-![Screenshot (143)](https://user-images.githubusercontent.com/67712127/166342050-b2e398cf-cb02-4a8f-8cd0-34f9c9479f5e.png)
+![bandicam 2022-09-22 09-53-00-289](https://user-images.githubusercontent.com/67712127/191704167-6b31ec81-3697-464f-8bb0-7b8cdc729e5e.jpg)
 
 A fun variation of the 15 slide puzzle which utilizes an image instead of numbers. It works as thus:
 
@@ -48,7 +49,7 @@ A fun variation of the 15 slide puzzle which utilizes an image instead of number
 
 ## No. 4 - TimeIt & Draw
 
-![bandicam 2022-09-21 20-32-19-072](https://user-images.githubusercontent.com/67712127/191598239-62db37e4-4759-4774-868b-650898ea64f7.jpg)
+![bandicam 2022-09-22 09-55-09-104](https://user-images.githubusercontent.com/67712127/191704245-4d1d4bee-26c0-451f-b8d2-c1e9cc80538c.jpg)
 
 
 A simple image viewer and timer for artists like me who might like to have timed drawing sessions. Its working is simple:
