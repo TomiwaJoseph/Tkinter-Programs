@@ -61,6 +61,9 @@ It has a pause functionality incase you need to drink water 😉 and a next imag
 
 ## No. 5 - PlayIt
 
+![bandicam 2022-09-22 09-28-41-506](https://user-images.githubusercontent.com/67712127/191700256-1a8034d6-7fec-4326-bf57-45e0a2834f8c.png)
+
+
 A simple but powerful audio player. It has the following features:
 
 - Play, pause, next, previous funtionality
@@ -85,6 +88,9 @@ A simple chess clock. It works as thus:
 - Reset, pause functionality and a short alarm sound to indicate timeout
 
 ## No. 7 - Memory Game
+
+![bandicam 2022-09-22 09-24-58-397](https://user-images.githubusercontent.com/67712127/191700203-42767c54-65f3-4c01-878e-980ca1e9487e.png)
+
 
 A simple game where an image (on a card) is shown to you briefly and you have to find their pairs within a stipulated amount of time
 
