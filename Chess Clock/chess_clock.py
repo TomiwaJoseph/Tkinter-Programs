@@ -1,7 +1,8 @@
 from tkinter import *
 from tkinter import messagebox
 from PIL import Image, ImageTk
-import simpleaudio as sa
+from playsound import playsound
+import multiprocessing
 
 
 # VARIABLES
@@ -10,7 +11,6 @@ player1_minutes = 0
 player2_minutes = 0
 prev_p1_min = 0
 prev_p2_min = 0
-mp3_object = sa.WaveObject.from_wave_file('./static/alarm.wav')
 
 
 class Switch(root):
@@ -105,7 +105,7 @@ class ClockIt(Frame):
         self.root.resizable(0,0)
         #===== UI ===================
         self.status_img = Image.open('./static/flag.png')
-        self.status_img = self.status_img.resize((70,70), Image.ANTIALIAS)
+        self.status_img = self.status_img.resize((70,70), Image.LANCZOS)
         self.status_img = ImageTk.PhotoImage(self.status_img)
         
         self.p1 = Button(command=lambda:self.know_player(self.p1),width=8,font='candara 48',bg='#222',fg='white')
@@ -133,7 +133,7 @@ class ClockIt(Frame):
     def pause_it(self):
         self.p1_paused = False
         self.p2_paused = False
-        sa.stop_all()
+        self.sound_player.terminate()
         self.p1.config(state=NORMAL,bg='#222',fg='gray')
         self.p2.config(state=NORMAL,bg='#222',fg='gray')
 
@@ -141,7 +141,6 @@ class ClockIt(Frame):
         global player1_minutes,player2_minutes,prev_p1_min,prev_p2_min
         self.flag_p1.place_forget()
         self.flag_p2.place_forget()
-        sa.stop_all()
         player1_minutes = prev_p1_min
         player2_minutes = prev_p2_min
         self.pause_it()
@@ -173,7 +172,8 @@ class ClockIt(Frame):
             else:
                 self.flag_p1.place(x=30,y=61)
                 self.game_over = True
-                play_object = mp3_object.play()
+                self.sound_player = multiprocessing.Process(target=playsound, args=('./static/alarm.wav',))
+                self.sound_player.start()
         else:
             self.p1.config(fg='white',bg='#222')
 
@@ -188,7 +188,8 @@ class ClockIt(Frame):
             else:
                 self.flag_p2.place(x=320,y=61)
                 self.game_over = True
-                play_object = mp3_object.play()
+                self.sound_player = multiprocessing.Process(target=playsound, args=('./static/alarm.wav',))
+                self.sound_player.start()
         else:
             self.p2.config(fg='white',bg='#222')
 
