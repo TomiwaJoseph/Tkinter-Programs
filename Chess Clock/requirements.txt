@@ -1,1 +1,2 @@
-simpleaudio==1.0.4
+Pillow==10.0.0
+playsound==1.3.0
