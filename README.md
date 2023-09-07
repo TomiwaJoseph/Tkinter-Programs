@@ -75,8 +75,6 @@ A simple but powerful audio player. It has the following features:
 - In short, it works.
 - Enjoy!
 
-NOTE: Incase you pull and run this app and it doesn't work due to the error (AttributeError: module 'collections' has no attribute 'MutableMapping'), don't fret. I found this out too when I changed my machine. According to sources this issue is with python-3.10. Either downgrade your interpreter to a lesser version of python (< python-3.10) and install the requirements.txt or comment out "import stagger" at the top of the script. With the latter the album art for the song playing won't be fetched. Hope python fixes this in the next upgrade 🙁
-
 ## No. 6 - Chess Clock
 
 ![bandicam 2022-05-02 22-41-52-978](https://user-images.githubusercontent.com/67712127/166341999-9e396c70-fa92-4118-971c-997651aef15c.png)
@@ -93,15 +91,19 @@ A simple chess clock. It works as thus:
 ![bandicam 2022-09-22 09-24-58-397](https://user-images.githubusercontent.com/67712127/191700203-42767c54-65f3-4c01-878e-980ca1e9487e.png)
 
 
-A simple game where an image (on a card) is shown to you briefly and you have to find their pairs within a stipulated amount of time
+A simple game where an image (on a card) is shown to you briefly and you have to find their pairs within a stipulated amount of time.
 
-## No. 8 - 15 Puzzle Slide
+## No. 8 - Connect Four
+
+Try to connect four disc horizontally, vertically or diagonally to win. Play with your friend or with AI. Enjoy!
+
+## No. 9 - 15 Puzzle Slide
 
 ![bandicam 2022-05-02 22-15-52-338](https://user-images.githubusercontent.com/67712127/166342069-0c5160a2-0b6d-4a0c-9dae-fbdd1abc6bd0.png)
 
 A game where you arrange numbers a scrambled numbers 1-15 in increasing order. Enjoy.
 
-## No. 9 - Take Note
+## No. 10 - Take Note
 
 ![bandicam 2022-05-02 23-38-09-207](https://user-images.githubusercontent.com/67712127/166342076-ead6452a-0d42-48f2-a3b4-5b5b4645278d.png)
 
@@ -110,7 +112,7 @@ A notepad-like tool for taking notes It has these functionalities.
 - New file, Open File, Copy, Cut, Paste, Theme, Word Count etc
 - Function that keep track of changes made to note to alert when user tries to create new note, open existing note or close the editor and there has been changes to the note.
 
-## No. 10 - Password Safe
+## No. 11 - Password Safe
 
 ![bandicam 2022-05-02 22-40-32-951](https://user-images.githubusercontent.com/67712127/166342098-398b7b9b-f482-4ef8-b57e-73359a3d8a7e.png)
 
@@ -125,7 +127,7 @@ A password generator and saver tool for generating and saving your passwords for
 - View your saved passwords
 - Enjoy
 
-## No. 11 - Jumble It
+## No. 12 - Jumble It
 
 ![bandicam 2022-05-02 22-20-04-377](https://user-images.githubusercontent.com/67712127/166342129-3ef53ec1-29b5-4a5a-a9df-0e5220e66b71.png)
 
@@ -138,7 +140,7 @@ This game is about rearranging scattered (jumbled) letters to form a correct wor
 - Use hints if you get stuck
 - Enjoy
 
-## No. 12
+## No. 13
  - Calculator
 
 ![bandicam 2022-05-02 22-25-27-634](https://user-images.githubusercontent.com/67712127/166342144-4be87f2d-67d0-4489-847b-542d69992f9f.png)
@@ -146,13 +148,13 @@ This game is about rearranging scattered (jumbled) letters to form a correct wor
 A simple calculator to perform simple operations like addition, multiplication, subtraction, division, square root and square.
 Enjoy.
 
-## No. 13 - Tic Tac Toe
+## No. 14 - Tic Tac Toe
 
 ![bandicam 2022-05-02 22-50-23-840](https://user-images.githubusercontent.com/67712127/166342182-0454b68a-edfb-47f7-a9d2-74cff496b906.png)
 
 The age long game of x-es and o-ohs. It has a play AI version and a play a friend version for you to enjoy. So, enjoy.
 
-## No. 14 - Sudoku
+## No. 15 - Sudoku
 
 ![bandicam 2022-05-02 22-21-36-358](https://user-images.githubusercontent.com/67712127/166342279-194740ca-8a32-4b60-a2a1-8431c3c1c2cc.png)
 
