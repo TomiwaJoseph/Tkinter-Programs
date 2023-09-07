@@ -142,8 +142,7 @@ This game is about rearranging scattered (jumbled) letters to form a correct wor
 - Use hints if you get stuck
 - Enjoy
 
-## No. 13
- - Calculator
+## No. 13 - Calculator
 
 ![bandicam 2022-05-02 22-25-27-634](https://user-images.githubusercontent.com/67712127/166342144-4be87f2d-67d0-4489-847b-542d69992f9f.png)
 
