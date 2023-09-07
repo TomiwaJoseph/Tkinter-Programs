@@ -95,6 +95,8 @@ A simple game where an image (on a card) is shown to you briefly and you have to
 
 ## No. 8 - Connect Four
 
+![connectFour](https://github.com/TomiwaJoseph/Tkinter-Programs/assets/67712127/34615124-07be-4352-b0c3-784c13633fea)
+
 Try to connect four disc horizontally, vertically or diagonally to win. Play with your friend or with AI. Enjoy!
 
 ## No. 9 - 15 Puzzle Slide
