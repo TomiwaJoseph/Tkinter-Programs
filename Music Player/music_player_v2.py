@@ -2,9 +2,9 @@ from tkinter import *
 from tkinter.filedialog import *
 from pygame import mixer
 from io import BytesIO
-import stagger
 import pygame
 from mutagen.mp3 import MP3
+from mutagen.id3 import ID3
 from tkinter import ttk
 from PIL import ImageTk, Image
 from threading import Timer
@@ -41,7 +41,7 @@ class StartPage(Frame):
         self.root.resizable(0, 0)
         # ======= UI =====================
         self.bg = Image.open('./static/icon.ico')
-        self.bg = self.bg.resize((54, 54), Image.ANTIALIAS)
+        self.bg = self.bg.resize((54, 54), Image.LANCZOS)
         self.the_logo = ImageTk.PhotoImage(self.bg)
         self.app_logo = Frame(width=62, height=60,
                               relief='ridge', bg='#101820', bd=2)
@@ -121,7 +121,7 @@ class MusicPage(Frame):
         ''' Create the user interface which include buttons and stuff '''
         # ============ Album Art ====================
         self.cover = Image.open('./static/icon.ico')
-        self.cover = self.cover.resize((300, 300), Image.ANTIALIAS)
+        self.cover = self.cover.resize((300, 300), Image.LANCZOS)
         self.cover = ImageTk.PhotoImage(self.cover)
         self.album_art = Label(
             image=self.cover, relief='ridge', width=230, height=230)
@@ -132,61 +132,61 @@ class MusicPage(Frame):
         self.control_frame.place(relx=0.5, rely=0.85, anchor=CENTER)
         # ============ Prev Button ====================
         self.prev_bg = Image.open('./static/_previous.png')
-        self.prev_bg = self.prev_bg.resize((50, 50), Image.ANTIALIAS)
+        self.prev_bg = self.prev_bg.resize((50, 50), Image.LANCZOS)
         self.prev_img = ImageTk.PhotoImage(self.prev_bg)
         self.previous_btn = Button(
             self.control_frame, image=self.prev_img, bd=0, command=self.previous_song, bg='#101820')
         self.previous_btn.place(relx=0.1, rely=0.5, anchor=CENTER)
         # ============ Play Button ====================
         self.play_bg = Image.open('./static/_play.png')
-        self.play_bg = self.play_bg.resize((50, 50), Image.ANTIALIAS)
+        self.play_bg = self.play_bg.resize((50, 50), Image.LANCZOS)
         self.play_img = ImageTk.PhotoImage(self.play_bg)
         self.pause_bg = Image.open('./static/_pause.png')
-        self.pause_bg = self.pause_bg.resize((50, 50), Image.ANTIALIAS)
+        self.pause_bg = self.pause_bg.resize((50, 50), Image.LANCZOS)
         self.pause_img = ImageTk.PhotoImage(self.pause_bg)
         self.play_btn = Button(self.control_frame, image=self.play_img, bd=0,
                                command=lambda: self.play_song('button press'), bg='#101820')
         self.play_btn.place(relx=0.199, rely=0.5, anchor=CENTER)
         # ============ Next Button ====================
         self.bg = Image.open('./static/_next.png')
-        self.bg = self.bg.resize((50, 50), Image.ANTIALIAS)
+        self.bg = self.bg.resize((50, 50), Image.LANCZOS)
         self.next_img = ImageTk.PhotoImage(self.bg)
         self.next_btn = Button(self.control_frame, image=self.next_img,
                                bd=0, command=lambda: self.next_song('from button'), bg='#101820')
         self.next_btn.place(relx=0.3, rely=0.5, anchor=CENTER)
         # ============ View Playlist Button ====================
         self.bg = Image.open('./static/_playlist.png')
-        self.bg = self.bg.resize((20, 20), Image.ANTIALIAS)
+        self.bg = self.bg.resize((20, 20), Image.LANCZOS)
         self.view_playlist_img = ImageTk.PhotoImage(self.bg)
         self.repeat_all_btn = Button(
             self.control_frame, image=self.view_playlist_img, bd=0, command=self.view_playlist, bg='#101820')
         self.repeat_all_btn.place(relx=0.4, rely=0.5, anchor=CENTER)
         # ============ Repeat All Button ====================
         self.bg = Image.open('./static/_repeat_all_yes.png')
-        self.bg = self.bg.resize((20, 20), Image.ANTIALIAS)
+        self.bg = self.bg.resize((20, 20), Image.LANCZOS)
         self.repeat_all_yes_img = ImageTk.PhotoImage(self.bg)
         self.bg = Image.open('./static/_repeat_all_icon.png')
-        self.bg = self.bg.resize((20, 20), Image.ANTIALIAS)
+        self.bg = self.bg.resize((20, 20), Image.LANCZOS)
         self.repeat_all_img = ImageTk.PhotoImage(self.bg)
         self.repeat_all_btn = Button(
             self.control_frame, image=self.repeat_all_img, bd=0, command=self.repeat_all_songs, bg='#101820')
         self.repeat_all_btn.place(relx=0.48, rely=0.5, anchor=CENTER)
         # ============ Repeat One Button ====================
         self.bg = Image.open('./static/_repeat_one_yes.png')
-        self.bg = self.bg.resize((20, 20), Image.ANTIALIAS)
+        self.bg = self.bg.resize((20, 20), Image.LANCZOS)
         self.repeat_one_yes_img = ImageTk.PhotoImage(self.bg)
         self.bg = Image.open('./static/_repeat_one_icon.png')
-        self.bg = self.bg.resize((20, 20), Image.ANTIALIAS)
+        self.bg = self.bg.resize((20, 20), Image.LANCZOS)
         self.repeat_one_img = ImageTk.PhotoImage(self.bg)
         self.repeat_one_btn = Button(
             self.control_frame, image=self.repeat_one_img, bd=0, command=self.repeat_current_song, bg='#101820')
         self.repeat_one_btn.place(relx=0.55, rely=0.5, anchor=CENTER)
         # ============ Shuffle Button ====================
         self.bg = Image.open('./static/_shuffle_yes.png')
-        self.bg = self.bg.resize((20, 20), Image.ANTIALIAS)
+        self.bg = self.bg.resize((20, 20), Image.LANCZOS)
         self.shuffle_yes_img = ImageTk.PhotoImage(self.bg)
         self.bg = Image.open('./static/_shuffle_icon.png')
-        self.bg = self.bg.resize((20, 20), Image.ANTIALIAS)
+        self.bg = self.bg.resize((20, 20), Image.LANCZOS)
         self.shuffle_img = ImageTk.PhotoImage(self.bg)
         self.shuffle_btn = Button(self.control_frame, image=self.shuffle_img,
                                   bd=0, command=self.shuffle_playlist, bg='#101820')
@@ -214,10 +214,10 @@ class MusicPage(Frame):
         self.song_artist_and_title.configure(state=DISABLED)
         # ============ Mute and Volume ====================
         self.bg = Image.open('./static/_mute_icon.png')
-        self.bg = self.bg.resize((20, 20), Image.ANTIALIAS)
+        self.bg = self.bg.resize((20, 20), Image.LANCZOS)
         self.mute_img = ImageTk.PhotoImage(self.bg)
         self.bg = Image.open('./static/_volume_icon.png')
-        self.bg = self.bg.resize((20, 20), Image.ANTIALIAS)
+        self.bg = self.bg.resize((20, 20), Image.LANCZOS)
         self.speaker_img = ImageTk.PhotoImage(self.bg)
         self.speaker_btn = Button(self.control_frame, image=self.speaker_img,
                                   bd=0, command=self.mute_and_unmute_song, bg='#101820')
@@ -232,43 +232,43 @@ class MusicPage(Frame):
     def create_menubar(self):
         ''' Create the menubar where thing like File, About etc. reside '''
         self.bg = Image.open('./static/_add_icon.png')
-        self.bg = self.bg.resize((12, 12), Image.ANTIALIAS)
+        self.bg = self.bg.resize((12, 12), Image.LANCZOS)
         self.add_icon = ImageTk.PhotoImage(self.bg)
 
         self.bg = Image.open('./static/_exit_icon.png')
-        self.bg = self.bg.resize((12, 12), Image.ANTIALIAS)
+        self.bg = self.bg.resize((12, 12), Image.LANCZOS)
         self.exit_icon = ImageTk.PhotoImage(self.bg)
 
         self.bg = Image.open('./static/_playlist_icon.png')
-        self.bg = self.bg.resize((12, 12), Image.ANTIALIAS)
+        self.bg = self.bg.resize((12, 12), Image.LANCZOS)
         self.playlist_view_icon = ImageTk.PhotoImage(self.bg)
 
         self.bg = Image.open('./static/_play_icon.png')
-        self.bg = self.bg.resize((12, 12), Image.ANTIALIAS)
+        self.bg = self.bg.resize((12, 12), Image.LANCZOS)
         self.play_icon = ImageTk.PhotoImage(self.bg)
 
         self.bg = Image.open('./static/_previous_icon.png')
-        self.bg = self.bg.resize((12, 12), Image.ANTIALIAS)
+        self.bg = self.bg.resize((12, 12), Image.LANCZOS)
         self.prev_icon = ImageTk.PhotoImage(self.bg)
 
         self.bg = Image.open('./static/_next_icon.png')
-        self.bg = self.bg.resize((12, 12), Image.ANTIALIAS)
+        self.bg = self.bg.resize((12, 12), Image.LANCZOS)
         self.next_icon = ImageTk.PhotoImage(self.bg)
 
         self.bg = Image.open('./static/_repeat_all_icon.png')
-        self.bg = self.bg.resize((15, 15), Image.ANTIALIAS)
+        self.bg = self.bg.resize((15, 15), Image.LANCZOS)
         self.repeat_icon = ImageTk.PhotoImage(self.bg)
 
         self.bg = Image.open('./static/_repeat_one_icon.png')
-        self.bg = self.bg.resize((15, 15), Image.ANTIALIAS)
+        self.bg = self.bg.resize((15, 15), Image.LANCZOS)
         self.repeat_one_icon = ImageTk.PhotoImage(self.bg)
 
         self.bg = Image.open('./static/_shuffle_icon.png')
-        self.bg = self.bg.resize((15, 15), Image.ANTIALIAS)
+        self.bg = self.bg.resize((15, 15), Image.LANCZOS)
         self.shuffle_icon = ImageTk.PhotoImage(self.bg)
 
         self.bg = Image.open('./static/_about_icon.png')
-        self.bg = self.bg.resize((15, 15), Image.ANTIALIAS)
+        self.bg = self.bg.resize((15, 15), Image.LANCZOS)
         self.about_icon = ImageTk.PhotoImage(self.bg)
 
         self.menubar = Menu(self.root)
@@ -319,9 +319,12 @@ class MusicPage(Frame):
         if self.paused:
             self.play_btn['image'] = self.pause_img
             self.paused = False
-        mixer.music.load(
-            self.playlist_in_use[self.current_song_index_in_playlist])
-        mixer.music.play(loops=0, start=new_position)
+        try:
+            mixer.music.load(
+                self.playlist_in_use[self.current_song_index_in_playlist])
+            mixer.music.play(loops=0, start=new_position)
+        except KeyError:
+            print("No song is currently playing...")
 
     def rerun_single_song_in_playlist(self):
         ''' Play current song again after it ends '''
@@ -671,19 +674,17 @@ class MusicPage(Frame):
         self.art = ''
         self.no_art = ''
         try:
-            mp3 = stagger.read_tag(self.song)
-            print(mp3)
-            by_data = mp3[stagger.id3.APIC][0].data
-            print(by_data)
-            image_stream = BytesIO(by_data)
+            music = ID3(self.song)
+            artwork = music.getall("APIC")[0].data            
+            image_stream = BytesIO(artwork)
             self.art = Image.open(image_stream)
-            self.art = self.art.resize((225, 225), Image.ANTIALIAS)
+            self.art = self.art.resize((225, 225), Image.LANCZOS)
             self.art = ImageTk.PhotoImage(self.art)
-        except:
+        except Exception as e:
             random_image = choice([str(i) for i in range(1, 11)])
             self.alt_art = f'./static/{random_image}.jpg'
             self.no_art = Image.open(self.alt_art)
-            self.no_art = self.no_art.resize((225, 225), Image.ANTIALIAS)
+            self.no_art = self.no_art.resize((225, 225), Image.LANCZOS)
             self.no_art = ImageTk.PhotoImage(self.no_art)
 
     def change_album_art(self):
