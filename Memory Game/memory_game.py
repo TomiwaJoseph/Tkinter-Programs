@@ -1,14 +1,11 @@
 from tkinter import *
 from random import shuffle
 from PIL import Image, ImageTk
-import simpleaudio as sa
-from threading import Timer
+from playsound import playsound
+from threading import Timer, Thread
 
 
 root = Tk
-defeat_song = sa.WaveObject.from_wave_file('./gameOver.wav')
-victory_song = sa.WaveObject.from_wave_file('./victory.wav')
-flip_sound = sa.WaveObject.from_wave_file('./flip.wav')
 
 
 class Switch(root):
@@ -44,10 +41,10 @@ class StartPage(Frame):
               bg='#101820', justify='left').place(relx=0.35, rely=0.45, anchor=CENTER)
 
         self.bg = Image.open('./static/card_1.png')
-        self.bg = self.bg.resize((54, 79), Image.ANTIALIAS)
+        self.bg = self.bg.resize((54, 79), Image.LANCZOS)
         self.back1 = ImageTk.PhotoImage(self.bg)
         self.bg = Image.open('./static/card_2.png')
-        self.bg = self.bg.resize((54, 79), Image.ANTIALIAS)
+        self.bg = self.bg.resize((54, 79), Image.LANCZOS)
         self.back2 = ImageTk.PhotoImage(self.bg)
 
         self.first_card = Frame(width=60, height=85,
@@ -74,7 +71,7 @@ class MainPage(Frame):
         self.root.title('Main Page')
         self.root.geometry('900x560+233+104')
         self.root.resizable(0, 0)
-        #------- VARIABLES -----------#
+        # ------- VARIABLES -----------#
         self.game_over = False
         self.time_frame = 30
         self.game_info = Label(text='', font='candara 42')
@@ -90,7 +87,7 @@ class MainPage(Frame):
         ] * 2
         self.images_found = []
 
-        #------- STARTER FUNCTIONS -----------#
+        # ------- STARTER FUNCTIONS -----------#
         self.create_cards()
         self.count_down()
 
@@ -110,7 +107,7 @@ class MainPage(Frame):
         shuffle(self.images_to_find)
 
         self.bg = Image.open('./static/card_1.png')
-        self.bg = self.bg.resize((94, 140), Image.ANTIALIAS)
+        self.bg = self.bg.resize((94, 140), Image.LANCZOS)
         self.back = ImageTk.PhotoImage(self.bg)
 
         self.card1 = Button(image=self.back, bg="teal", height=138, width=90, bd=0,
@@ -153,13 +150,13 @@ class MainPage(Frame):
 
     def flip_card(self, button, image_name):
         if button not in self.images_flipped_buttons and len(self.images_flipped_buttons) != 2:
-            play_object = flip_sound.play()
+            self.sound_player = Thread(
+                target=playsound, args=('./static/flip.wav',))
+            self.sound_player.start()
             self.images_flipped.append(image_name)
             self.images_flipped_buttons.append(button)
-            # new_the_image = PhotoImage(file=f'./static/{image_name}.png')
-            # inside_image = new_the_image.subsample(1)
             bg = Image.open(f'./static/{image_name}.png')
-            bg = bg.resize((75, 75), Image.ANTIALIAS)
+            bg = bg.resize((75, 75), Image.LANCZOS)
             inside_image = ImageTk.PhotoImage(bg)
             button.configure(bg='#f2aa4c', image=inside_image)
             button.image = inside_image
@@ -178,7 +175,7 @@ class MainPage(Frame):
         else:
             for button in self.images_flipped_buttons:
                 bg = Image.open('./static/card_1.png')
-                bg = bg.resize((94, 140), Image.ANTIALIAS)
+                bg = bg.resize((94, 140), Image.LANCZOS)
                 previous = ImageTk.PhotoImage(bg)
                 button.configure(bg='teal', image=previous)
                 button.image = previous
@@ -188,7 +185,9 @@ class MainPage(Frame):
 
     def checkIfAllCardFound(self):
         if len(self.images_found) == 6:
-            play_object = victory_song.play()
+            self.sound_player = Thread(
+                target=playsound, args=('./static/victory.wav',))
+            self.sound_player.start()
             self.game_over = True
             self.game_info.config(text=f'CONGRATULATIONS!\n It took you {29 - self.time_frame} seconds.',
                                   fg='#f2aa4c', bg='#101820')
@@ -214,7 +213,6 @@ class MainPage(Frame):
                 self.showGameOver()
 
     def showGameOver(self):
-        # self.time_label.config(text="GAME OVER!",bg='#101820',fg='#f2aa4c')
         for but in [self.card1, self.card2, self.card3, self.card4,
                     self.card5, self.card6, self.card7, self.card8, self.card9,
                     self.card10, self.card11, self.card12]:
@@ -225,7 +223,9 @@ class MainPage(Frame):
         self.game_info.place(relx=0.5, rely=0.4, anchor=CENTER)
         self.restart_button.place(relx=0.5, rely=0.65, anchor=CENTER)
         self.time_label.place_forget()
-        play_object = defeat_song.play()
+        self.sound_player = Thread(
+            target=playsound, args=('./static/gameOver.wav',))
+        self.sound_player.start()
 
 
 if __name__ == '__main__':
