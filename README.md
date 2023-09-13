@@ -105,7 +105,11 @@ Try to connect four disc horizontally, vertically or diagonally to win. Play wit
 
 A game where you arrange numbers a scrambled numbers 1-15 in increasing order. Enjoy.
 
-## No. 10 - Take Note
+## No. 10 - Typing Test
+
+How fast and accurate are you? Test it out with this typing test app.
+
+## No. 11 - Take Note
 
 ![bandicam 2022-05-02 23-38-09-207](https://user-images.githubusercontent.com/67712127/166342076-ead6452a-0d42-48f2-a3b4-5b5b4645278d.png)
 
@@ -114,7 +118,7 @@ A notepad-like tool for taking notes It has these functionalities.
 - New file, Open File, Copy, Cut, Paste, Theme, Word Count etc
 - Function that keep track of changes made to note to alert when user tries to create new note, open existing note or close the editor and there has been changes to the note.
 
-## No. 11 - Password Safe
+## No. 12 - Password Safe
 
 ![bandicam 2022-05-02 22-40-32-951](https://user-images.githubusercontent.com/67712127/166342098-398b7b9b-f482-4ef8-b57e-73359a3d8a7e.png)
 
@@ -129,7 +133,7 @@ A password generator and saver tool for generating and saving your passwords for
 - View your saved passwords
 - Enjoy
 
-## No. 12 - Jumble It
+## No. 13 - Jumble It
 
 ![bandicam 2022-05-02 22-20-04-377](https://user-images.githubusercontent.com/67712127/166342129-3ef53ec1-29b5-4a5a-a9df-0e5220e66b71.png)
 
@@ -142,20 +146,20 @@ This game is about rearranging scattered (jumbled) letters to form a correct wor
 - Use hints if you get stuck
 - Enjoy
 
-## No. 13 - Calculator
+## No. 14 - Calculator
 
 ![bandicam 2022-05-02 22-25-27-634](https://user-images.githubusercontent.com/67712127/166342144-4be87f2d-67d0-4489-847b-542d69992f9f.png)
 
 A simple calculator to perform simple operations like addition, multiplication, subtraction, division, square root and square.
 Enjoy.
 
-## No. 14 - Tic Tac Toe
+## No. 15 - Tic Tac Toe
 
 ![bandicam 2022-05-02 22-50-23-840](https://user-images.githubusercontent.com/67712127/166342182-0454b68a-edfb-47f7-a9d2-74cff496b906.png)
 
 The age long game of x-es and o-ohs. It has a play AI version and a play a friend version for you to enjoy. So, enjoy.
 
-## No. 15 - Sudoku
+## No. 16 - Sudoku
 
 ![bandicam 2022-05-02 22-21-36-358](https://user-images.githubusercontent.com/67712127/166342279-194740ca-8a32-4b60-a2a1-8431c3c1c2cc.png)
 
