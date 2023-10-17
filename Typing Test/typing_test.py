@@ -63,6 +63,7 @@ class MainPage(Frame):
         self.root = root
         self.root.geometry('1200x620+83+74')
         self.root.resizable(0, 0)
+        self.root.config(cursor='none')
         self.root.title('Typing Test')
         # =============== Variables ============#
         self.TEXT_TO_TYPE = ""
@@ -124,6 +125,15 @@ class MainPage(Frame):
         self.text_area.bind('<Left>', lambda event: 'break')
         self.text_area.bind('<Right>', lambda event: 'break')
         self.text_area.bind('<Tab>', lambda event: 'break')
+        # Disable all Mouse Events
+        self.text_area.bind('<Button-1>', lambda event: 'break')
+        self.text_area.bind('<B1-Motion>', lambda event: 'break')
+        self.text_area.bind('<Button-2>', lambda event: 'break')
+        self.text_area.bind('<Button-3>', lambda event: 'break')
+        self.text_area.bind('<B2-Motion>', lambda event: 'break')
+        self.text_area.bind('<B3-Motion>', lambda event: 'break')
+        self.text_area.bind('<Enter>', lambda event: 'break')
+        self.text_area.bind('<Leave>', lambda event: 'break')
 
     def clean_text(self, event):
         if self.cursor != 0:
