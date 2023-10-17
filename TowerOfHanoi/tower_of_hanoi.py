@@ -34,10 +34,10 @@ class StartPage(Frame):
         Label(self.master, text='Tower of Hanoi', font='montserrat 40',
               fg='#fff', bg='#101820').place(relx=0.5, rely=0.41, anchor="center")
         Button(self.master, text='Start', width=10, font=('montserrat medium', 14), bd=0, fg='#101820', bg='#fff',
-               command=lambda: self.master.switch_frame(SetDisks)).place(relx=0.5, rely=0.59, anchor="center")
+               command=lambda: self.master.switch_frame(SetDiscs)).place(relx=0.5, rely=0.59, anchor="center")
 
 
-class SetDisks(Frame):
+class SetDiscs(Frame):
     def __init__(self, root):
         Frame.__init__(self, root)
         Frame.configure(self, bg='#101820')
@@ -211,28 +211,28 @@ class MainPage(Frame):
 
     def pole_is_clicked(self, event):
         current_tag = self.canvas.gettags('current')[0]
-        least_disk = 0
+        least_disc = 0
         clicked_pole = ""
         if self.animation_done:
             if current_tag == 'source' and self.source_pole_state != []:
-                least_disk = self.source_pole_state[0]
+                least_disc = self.source_pole_state[0]
                 clicked_pole = "source"
             elif current_tag == 'auxillary' and self.auxillary_pole_state != []:
-                least_disk = self.auxillary_pole_state[0]
+                least_disc = self.auxillary_pole_state[0]
                 clicked_pole = "auxillary"
             elif current_tag == 'destination' and self.destination_pole_state != []:
-                least_disk = self.destination_pole_state[0]
+                least_disc = self.destination_pole_state[0]
                 clicked_pole = "destination"
             else:
-                least_disk, clicked_pole = self.find_clicked_disc_and_pole(
+                least_disc, clicked_pole = self.find_clicked_disc_and_pole(
                     current_tag)
 
-            if least_disk and clicked_pole:
+            if least_disc and clicked_pole:
                 check_possible = self.check_if_possible(
-                    least_disk, clicked_pole)
+                    least_disc, clicked_pole)
                 if isinstance(check_possible, (tuple)):
-                    valid, from_disk, direction, destination = check_possible
-                    return self.move_disk_up(self.tag_and_id[least_disk], from_disk, direction, destination)
+                    valid, from_disc, direction, destination = check_possible
+                    return self.move_disc_up(self.tag_and_id[least_disc], from_disc, direction, destination)
 
     def check_if_possible(self, disc, pole):
         if pole == "source":
@@ -370,14 +370,14 @@ class MainPage(Frame):
         depth_down = self.get_disc_depth(dest)
         return self.move_disc_down(disc, depth_down, dest)
 
-    def move_disk_up(self, disc, pole, direction, dest):
+    def move_disc_up(self, disc, pole, direction, dest):
         self.canvas.move(disc, 0, -1)
         pos = self.canvas.coords(disc)
 
         # Lift the disc up to the top of the pole
         if pos[1] != 33:
             self.animation_done = False
-            return self.canvas.after(1, self.move_disk_up, disc, pole, direction, dest)
+            return self.canvas.after(1, self.move_disc_up, disc, pole, direction, dest)
         else:
             self.animation_done = True
 
@@ -403,12 +403,12 @@ class MainPage(Frame):
         shuffle(all_colors)
 
         for i in range(len(all_widths), 0, -1):
-            self.disk_img = Image.open(
+            self.disc_img = Image.open(
                 f'./static/disc-{all_colors[i % 5]}.png')
-            self.disk_img = self.disk_img.resize(
+            self.disc_img = self.disc_img.resize(
                 (all_widths[DISC_COUNT-i], 22), Image.LANCZOS)
-            self.disk_img = ImageTk.PhotoImage(self.disk_img)
-            self.images_ref.append(self.disk_img)
+            self.disc_img = ImageTk.PhotoImage(self.disc_img)
+            self.images_ref.append(self.disc_img)
             disc = self.canvas.create_image(
                 self.canvas_width//4.5, y_position, image=self.images_ref[-1], tags=all_widths[DISC_COUNT-i])
             self.tag_and_id[all_widths[DISC_COUNT-i]] = disc
@@ -442,8 +442,8 @@ class MainPage(Frame):
                         disc, pole_from, pole_to)
 
                 if isinstance(check_possible, (tuple)):
-                    valid, from_disk, direction, destination = check_possible
-                    return self.move_disk_up(self.tag_and_id[disc], from_disk, direction, destination)
+                    valid, from_disc, direction, destination = check_possible
+                    return self.move_disc_up(self.tag_and_id[disc], from_disc, direction, destination)
 
     def pole_or_disc_is_dragged(self, event):
         x = event.x
@@ -457,20 +457,20 @@ class MainPage(Frame):
         self.drag_parameters['disc'] = disc_clicked
 
         if disc_clicked in self.source_pole_state:
-            least_disk = min(self.source_pole_state)
-            if disc_clicked == least_disk:
+            least_disc = min(self.source_pole_state)
+            if disc_clicked == least_disc:
                 self.drag_parameters['pole_from'] = 'source'
             else:
                 self.drag_parameters = {}
         elif disc_clicked in self.auxillary_pole_state:
-            least_disk = min(self.auxillary_pole_state)
-            if disc_clicked == least_disk:
+            least_disc = min(self.auxillary_pole_state)
+            if disc_clicked == least_disc:
                 self.drag_parameters['pole_from'] = 'auxillary'
             else:
                 self.drag_parameters = {}
         elif disc_clicked in self.destination_pole_state:
-            least_disk = min(self.destination_pole_state)
-            if disc_clicked == least_disk:
+            least_disc = min(self.destination_pole_state)
+            if disc_clicked == least_disc:
                 self.drag_parameters['pole_from'] = 'destination'
             else:
                 self.drag_parameters = {}
@@ -537,7 +537,7 @@ class MainPage(Frame):
         self.canvas.tag_bind(destination, '<Button-1>', self.pole_is_clicked)
 
     def go_back(self):
-        self.master.switch_frame(SetDisks)
+        self.master.switch_frame(SetDiscs)
 
 
 if __name__ == '__main__':
