@@ -327,6 +327,7 @@ class HumanPage(Frame):
     def move_chip(self, disc, dy):
         self.canvas.move(disc, 0, 1)
         pos = self.canvas.coords(disc)
+        # print(pos, dy)
         if pos[1] < dy:
             self.animation_done = False
             self.canvas.after(2, self.move_chip, disc, dy)
