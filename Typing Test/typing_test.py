@@ -37,7 +37,7 @@ class StartPage(Frame):
         Label(self.master, text='Typing Test', font=('Fira Code', 42),
               fg='#fff', bg='#1a1a1a').place(relx=0.5, rely=0.39, anchor='center')
         startpage_timer = Timer(
-            3, lambda: self.master.switch_frame(InstructionPage))
+            2, lambda: self.master.switch_frame(InstructionPage))
         startpage_timer.start()
 
 
@@ -47,13 +47,13 @@ class InstructionPage(Frame):
         Frame.configure(self, bg='#1a1a1a')
         self.root = root
         self.root.resizable(0, 0)
-        self.root.geometry('700x400+333+184')
+        self.root.geometry('500x300+433+234')
         self.root.title('Instruction Page')
         # ======= Instruction =====================
-        Label(text='Hello typist!\nType all the words with spaces in-between them.\nWishing you good luck!', font=(
-            'Fira Code', 18), fg='#fff', bg='#1a1a1a').place(relx=0.5, rely=0.4, anchor='center')
+        Label(text='Hello typist!\nType all the words \nwith spaces in-between them.\nWishing you good luck!', font=(
+            'Fira Code', 18), fg='#fff', bg='#1a1a1a').place(relx=0.5, rely=0.38, anchor='center')
         Button(text='S T A R T', bg='#f2aa4c', fg='#fff', font=('dosis', 14), width=18, bd=0,
-               command=lambda: self.master.switch_frame(MainPage)).place(relx=0.5, rely=0.65, anchor='center')
+               command=lambda: self.master.switch_frame(MainPage)).place(relx=0.5, rely=0.73, anchor='center')
 
 
 class MainPage(Frame):
@@ -63,7 +63,6 @@ class MainPage(Frame):
         self.root = root
         self.root.geometry('1200x620+83+74')
         self.root.resizable(0, 0)
-        self.root.config(cursor='none')
         self.root.title('Typing Test')
         # =============== Variables ============#
         self.TEXT_TO_TYPE = ""
