@@ -101,7 +101,10 @@ Try to connect four disc horizontally, vertically or diagonally to win. Play wit
 
 ## No. 9 - Tower of Hanoi Puzzle
 
-Can you move all the discs from the first pole to the second or third pole.
+![{2CB14390-0D33-4786-8D49-4FE94B71BC0E} png](https://github.com/TomiwaJoseph/Tkinter-Programs/assets/67712127/dfe4b11d-2ea9-44a5-ae65-e0917326c659)
+
+Can you move all the discs from the first pole to the second or third pole?
+Select how many disc you want to move and let the fun begin.
 Note:
 -> Only one disc can be moved at a time
 -> Only the uppermost disc from a pole can be moved to the top of another pole or an empty pole
