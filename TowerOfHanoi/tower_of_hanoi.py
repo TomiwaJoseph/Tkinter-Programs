@@ -440,6 +440,8 @@ class MainPage(Frame):
                 elif pole_from == "destination" and pole_to != 3:
                     check_possible = self.check_if_drag_is_possible(
                         disc, pole_from, pole_to)
+                else:
+                    return
 
                 if isinstance(check_possible, (tuple)):
                     valid, from_disc, direction, destination = check_possible
