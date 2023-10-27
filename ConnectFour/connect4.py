@@ -6,8 +6,8 @@ from tkinter import messagebox
 
 
 root = Tk
-ROW_COUNT = 6
-COLUMN_COUNT = 7
+COL_COUNT = 6
+ROW_COUNT = 7
 GAME_TIME = 0
 
 
@@ -196,7 +196,7 @@ class HumanPage(Frame):
                 self.game_over = True
 
     def create_board(self):
-        board = np.zeros((ROW_COUNT, COLUMN_COUNT))
+        board = np.zeros((COL_COUNT, ROW_COUNT))
         return board
 
     def draw_winning_line(self, directions):
@@ -228,7 +228,7 @@ class HumanPage(Frame):
                     x0, y0, x1, y1, fill='#1a1a1a', width=3)
 
     def is_valid_location(self, board,  col):
-        return board[ROW_COUNT-1][col] == 0
+        return board[COL_COUNT-1][col] == 0
 
     def clear_board(self):
         self.canvas.delete('all')
@@ -258,8 +258,8 @@ class HumanPage(Frame):
 
     def winning_move(self, board, piece):
         # Check horizontal locations for win
-        for c in range(COLUMN_COUNT-3):
-            for r in range(ROW_COUNT):
+        for r in range(6):
+            for c in range(4):
                 if board[r][c] == piece and board[r][c+1] == piece and board[r][c+2] == piece and board[r][c+3] == piece:
                     parsed = []
                     directions = [(r, c), (r, c+1), (r, c+2), (r, c+3)]
@@ -269,8 +269,8 @@ class HumanPage(Frame):
                     return True
 
         # Check vertical locations for win
-        for c in range(COLUMN_COUNT):
-            for r in range(ROW_COUNT-3):
+        for r in range(3):
+            for c in range(7):
                 if board[r][c] == piece and board[r+1][c] == piece and board[r+2][c] == piece and board[r+3][c] == piece:
                     parsed = []
                     directions = [(r, c), (r+1, c), (r+2, c), (r+3, c)]
@@ -279,9 +279,9 @@ class HumanPage(Frame):
                     self.winning_directions = ['vertical', parsed]
                     return True
 
-        # Check positively sloped diagonals
-        for c in range(COLUMN_COUNT-3):
-            for r in range(ROW_COUNT-3):
+        # Check (top-left to bottom-right) sloped diagonals
+        for r in range(3):
+            for c in range(4):
                 if board[r][c] == piece and board[r+1][c+1] == piece and board[r+2][c+2] == piece and board[r+3][c+3] == piece:
                     parsed = []
                     directions = [(r, c), (r+1, c+1), (r+2, c+2), (r+3, c+3)]
@@ -290,12 +290,12 @@ class HumanPage(Frame):
                     self.winning_directions = ['positive', parsed]
                     return True
 
-        # Check negatively sloped diagonals
-        for c in range(COLUMN_COUNT-3):
-            for r in range(3, ROW_COUNT):
-                if board[r][c] == piece and board[r-1][c+1] == piece and board[r-2][c+2] == piece and board[r-3][c+3] == piece:
+        # Check (top-right to bottom-left) sloped diagonals
+        for r in range(3):
+            for c in range(3, 7):
+                if board[r][c] == piece and board[r+1][c-1] == piece and board[r+2][c-2] == piece and board[r+3][c-3] == piece:
                     parsed = []
-                    directions = [(r, c), (r-1, c+1), (r-2, c+2), (r-3, c+3)]
+                    directions = [(r, c), (r+1, c-1), (r+2, c-2), (r+3, c-3)]
                     for i in directions:
                         parsed.append(self.parse_row_col(i[0], i[1]))
                     self.winning_directions = ['negative', parsed]
@@ -305,7 +305,7 @@ class HumanPage(Frame):
         board[row][col] = piece
 
     def get_next_open_row(self, board, col):
-        for r in range(ROW_COUNT):
+        for r in range(COL_COUNT):
             if board[r][col] == 0:
                 return r
 
@@ -327,7 +327,6 @@ class HumanPage(Frame):
     def move_chip(self, disc, dy):
         self.canvas.move(disc, 0, 1)
         pos = self.canvas.coords(disc)
-        # print(pos, dy)
         if pos[1] < dy:
             self.animation_done = False
             self.canvas.after(2, self.move_chip, disc, dy)
@@ -557,7 +556,7 @@ class AIPage(Frame):
         print(np.flip(board, 0))
 
     def create_board(self):
-        board = np.zeros((ROW_COUNT, COLUMN_COUNT))
+        board = np.zeros((COL_COUNT, ROW_COUNT))
         return board
 
     def clear_board(self):
@@ -586,13 +585,13 @@ class AIPage(Frame):
         return f'{positions.get(col)}{row}'
 
     def is_valid_location(self, board,  col):
-        return board[ROW_COUNT-1][col] == 0
+        return board[COL_COUNT-1][col] == 0
 
     def drop_piece(self, board, row, col, piece):
         board[row][col] = piece
 
     def get_next_open_row(self, board, col):
-        for r in range(ROW_COUNT):
+        for r in range(COL_COUNT):
             if board[r][col] == 0:
                 return r
 
@@ -677,8 +676,8 @@ class AIPage(Frame):
 
     def winning_move(self, board, piece):
         # Check horizontal locations for win
-        for c in range(COLUMN_COUNT-3):
-            for r in range(ROW_COUNT):
+        for r in range(6):
+            for c in range(4):
                 if board[r][c] == piece and board[r][c+1] == piece and board[r][c+2] == piece and board[r][c+3] == piece:
                     parsed = []
                     directions = [(r, c), (r, c+1), (r, c+2), (r, c+3)]
@@ -688,8 +687,8 @@ class AIPage(Frame):
                     return True
 
         # Check vertical locations for win
-        for c in range(COLUMN_COUNT):
-            for r in range(ROW_COUNT-3):
+        for r in range(3):
+            for c in range(7):
                 if board[r][c] == piece and board[r+1][c] == piece and board[r+2][c] == piece and board[r+3][c] == piece:
                     parsed = []
                     directions = [(r, c), (r+1, c), (r+2, c), (r+3, c)]
@@ -698,9 +697,9 @@ class AIPage(Frame):
                     self.winning_directions = ['vertical', parsed]
                     return True
 
-        # Check positively sloped diagonals
-        for c in range(COLUMN_COUNT-3):
-            for r in range(ROW_COUNT-3):
+        # Check (top-left to bottom-right) sloped diagonals
+        for r in range(3):
+            for c in range(4):
                 if board[r][c] == piece and board[r+1][c+1] == piece and board[r+2][c+2] == piece and board[r+3][c+3] == piece:
                     parsed = []
                     directions = [(r, c), (r+1, c+1), (r+2, c+2), (r+3, c+3)]
@@ -709,12 +708,12 @@ class AIPage(Frame):
                     self.winning_directions = ['positive', parsed]
                     return True
 
-        # Check negatively sloped diagonals
-        for c in range(COLUMN_COUNT-3):
-            for r in range(3, ROW_COUNT):
-                if board[r][c] == piece and board[r-1][c+1] == piece and board[r-2][c+2] == piece and board[r-3][c+3] == piece:
+        # Check (top-right to bottom-left) sloped diagonals
+        for r in range(3):
+            for c in range(3, 7):
+                if board[r][c] == piece and board[r+1][c-1] == piece and board[r+2][c-2] == piece and board[r+3][c-3] == piece:
                     parsed = []
-                    directions = [(r, c), (r-1, c+1), (r-2, c+2), (r-3, c+3)]
+                    directions = [(r, c), (r+1, c-1), (r+2, c-2), (r+3, c-3)]
                     for i in directions:
                         parsed.append(self.parse_row_col(i[0], i[1]))
                     self.winning_directions = ['negative', parsed]
@@ -742,32 +741,32 @@ class AIPage(Frame):
         score = 0
 
         # Score center column
-        center_array = [int(i) for i in list(board[:, COLUMN_COUNT//2])]
+        center_array = [int(i) for i in list(board[:, ROW_COUNT//2])]
         center_count = center_array.count(piece)
         score += center_count * 3
 
         # Score Horizontal
-        for r in range(ROW_COUNT):
+        for r in range(COL_COUNT):
             row_array = [int(i) for i in list(board[r, :])]
-            for c in range(COLUMN_COUNT-3):
+            for c in range(ROW_COUNT-3):
                 window = row_array[c:c+self.WINDOW_LENGTH]
                 score += self.evaluate_window(window, piece)
 
         # Score Vertical
-        for c in range(COLUMN_COUNT):
+        for c in range(ROW_COUNT):
             col_array = [int(i) for i in list(board[:, c])]
-            for r in range(ROW_COUNT-3):
+            for r in range(COL_COUNT-3):
                 window = col_array[r:r+self.WINDOW_LENGTH]
                 score += self.evaluate_window(window, piece)
 
         # Score posiive sloped diagonal
-        for r in range(ROW_COUNT-3):
-            for c in range(COLUMN_COUNT-3):
+        for r in range(COL_COUNT-3):
+            for c in range(ROW_COUNT-3):
                 window = [board[r+i][c+i] for i in range(self.WINDOW_LENGTH)]
                 score += self.evaluate_window(window, piece)
 
-        for r in range(ROW_COUNT-3):
-            for c in range(COLUMN_COUNT-3):
+        for r in range(COL_COUNT-3):
+            for c in range(ROW_COUNT-3):
                 window = [board[r+3-i][c+i] for i in range(self.WINDOW_LENGTH)]
                 score += self.evaluate_window(window, piece)
 
@@ -824,7 +823,7 @@ class AIPage(Frame):
 
     def get_valid_locations(self, board):
         valid_locations = []
-        for col in range(COLUMN_COUNT):
+        for col in range(ROW_COUNT):
             if self.is_valid_location(board, col):
                 valid_locations.append(col)
         return valid_locations
