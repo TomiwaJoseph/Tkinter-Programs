@@ -233,9 +233,9 @@ class HumanPage(Frame):
     def clear_board(self):
         self.canvas.delete('all')
 
-        if self.player_turn == 1:
+        try:
             self.winner1_label.place_forget()
-        else:
+        except AttributeError:
             self.winner2_label.place_forget()
 
         self.restart_button.place_forget()
