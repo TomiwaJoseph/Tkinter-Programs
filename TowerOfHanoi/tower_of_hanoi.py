@@ -44,6 +44,7 @@ class SetDiscs(Frame):
         self.root = root
         self.root.title('Settings Page')
         self.root.geometry('530x310+418+229')
+        self.root.config(menu=" ")
         self.root.resizable(0, 0)
         # ======== Variables ==========
         self.disc_variable = StringVar()
@@ -98,7 +99,7 @@ class MainPage(Frame):
         # ========= Info about Game ==============
         self.menubar = Menu()
         self.filemenu = Menu(self.menubar, tearoff=0)
-        self.menubar.add_cascade(label='About Game', command=self.about_game)
+        self.menubar.add_cascade(label='About Puzzle', command=self.about_game)
         self.menubar.add_cascade(
             label='About Developer', command=self.about_developer)
         self.root.config(menu=self.menubar)
@@ -544,5 +545,6 @@ class MainPage(Frame):
 
 if __name__ == '__main__':
     app = Switch()
-    app.attributes("-alpha", 0.9)
+    # app.attributes("-alpha", 0.9)  # sets transparency
+    # app.attributes('-topmost', 1)  # stay on top
     app.mainloop()
