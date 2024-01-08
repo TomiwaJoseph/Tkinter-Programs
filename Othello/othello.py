@@ -54,33 +54,33 @@ class SettingsPage(Frame):
         self.canvas.place(relx=0.5, rely=0.42, anchor=CENTER)
 
         # one star image
-        self.one_star = Image.open('one-star.png')
+        self.one_star = Image.open('./assets/one-star.png')
         self.one_star = self.one_star.resize(
             (80, 80), Image.LANCZOS)
         self.one_star = ImageTk.PhotoImage(self.one_star)
         # two star image
-        self.two_star = Image.open('two-star.png')
+        self.two_star = Image.open('./assets/two-star.png')
         self.two_star = self.two_star.resize(
             (80, 80), Image.LANCZOS)
         self.two_star = ImageTk.PhotoImage(self.two_star)
         # three star image
-        self.three_star = Image.open('three-star.png')
+        self.three_star = Image.open('./assets/three-star.png')
         self.three_star = self.three_star.resize(
             (80, 80), Image.LANCZOS)
         self.three_star = ImageTk.PhotoImage(self.three_star)
 
         # one star checked image
-        self.one_star_checked = Image.open('one-star-checked.png')
+        self.one_star_checked = Image.open('./assets/one-star-checked.png')
         self.one_star_checked = self.one_star_checked.resize(
             (80, 80), Image.LANCZOS)
         self.one_star_checked = ImageTk.PhotoImage(self.one_star_checked)
         # two star checked image
-        self.two_star_checked = Image.open('two-star-checked.png')
+        self.two_star_checked = Image.open('./assets/two-star-checked.png')
         self.two_star_checked = self.two_star_checked.resize(
             (80, 80), Image.LANCZOS)
         self.two_star_checked = ImageTk.PhotoImage(self.two_star_checked)
         # three star checked image
-        self.three_star_checked = Image.open('three-star-checked.png')
+        self.three_star_checked = Image.open('./assets/three-star-checked.png')
         self.three_star_checked = self.three_star_checked.resize(
             (80, 80), Image.LANCZOS)
         self.three_star_checked = ImageTk.PhotoImage(self.three_star_checked)
@@ -176,12 +176,12 @@ class AIPage(Frame):
         self.minEvalBoard = -1  # min - 1
         self.maxEvalBoard = self.n * self.n + 4 * self.n + 4 + 1  # max + 1
         # white disc instantialization
-        self.white_disc_img = Image.open('white-disc.png')
+        self.white_disc_img = Image.open('./assets/white-disc.png')
         self.white_disc_resize = self.white_disc_img.resize(
             (50, 50), Image.LANCZOS)
         self.white_disc = ImageTk.PhotoImage(self.white_disc_resize)
         # black disc instantialization
-        self.black_disc_img = Image.open('black-disc.png')
+        self.black_disc_img = Image.open('./assets/black-disc.png')
         self.black_disc_resize = self.black_disc_img.resize(
             (50, 50), Image.LANCZOS)
         self.black_disc = ImageTk.PhotoImage(self.black_disc_resize)
@@ -191,13 +191,13 @@ class AIPage(Frame):
         self.restart_button = Button(
             text="Restart", width=15, command=self.restart_game, bg="#fff", fg="#101820", font=("fira code", 16))
         # ======== Back Button ============
-        self.back_image = Image.open('back_icon.png')
+        self.back_image = Image.open('./assets/back_icon.png')
         self.back_bg = self.back_image.resize((35, 35), Image.LANCZOS)
         self.back_bg = ImageTk.PhotoImage(self.back_bg)
         Button(image=self.back_bg, bg="#fff",
                command=self.go_back).place(relx=0.1, rely=0.08, anchor=CENTER)
         # ======== Help Button ========
-        self.help_image = Image.open('help_icon.png')
+        self.help_image = Image.open('./assets/help_icon.png')
         self.help_bg = self.help_image.resize((35, 35), Image.LANCZOS)
         self.help_bg = ImageTk.PhotoImage(self.help_bg)
         Button(image=self.help_bg, bg="#fff", command=self.show_help).place(
@@ -371,12 +371,12 @@ class AIPage(Frame):
         self.check_if_ai_plays_first()
 
     def draw_score_board(self):
-        self.score_white_disc = Image.open('white-disc.png')
+        self.score_white_disc = Image.open('./assets/white-disc.png')
         self.score_white_disc = self.score_white_disc.resize(
             (70, 70), Image.LANCZOS)
         self.score_white_disc = ImageTk.PhotoImage(self.score_white_disc)
 
-        self.score_black_disc = Image.open('black-disc.png')
+        self.score_black_disc = Image.open('./assets/black-disc.png')
         self.score_black_disc = self.score_black_disc.resize(
             (70, 70), Image.LANCZOS)
         self.score_black_disc = ImageTk.PhotoImage(self.score_black_disc)
@@ -524,14 +524,14 @@ class AIPage(Frame):
 
             # Shrinking the disc
             if color == "W":
-                white_disc_img = Image.open('white-disc.png')
+                white_disc_img = Image.open('./assets/white-disc.png')
                 new_disc_resize = white_disc_img.resize(
                     (50, 50), Image.LANCZOS)
                 new_disc = ImageTk.PhotoImage(new_disc_resize)
                 self.canvas.create_image(
                     x, y, image=new_disc, tag='animated')
             else:
-                black_disc_img = Image.open('black-disc.png')
+                black_disc_img = Image.open('./assets/black-disc.png')
                 new_disc_resize = black_disc_img.resize(
                     (50, 50), Image.LANCZOS)
                 new_disc = ImageTk.PhotoImage(new_disc_resize)
@@ -553,14 +553,14 @@ class AIPage(Frame):
 
             # Enlarging the disc
             if color == "W":
-                black_disc_img = Image.open('black-disc.png')
+                black_disc_img = Image.open('./assets/black-disc.png')
                 new_disc_resize = black_disc_img.resize(
                     (20, 20), Image.LANCZOS)
                 self.new_disc = ImageTk.PhotoImage(new_disc_resize)
                 self.canvas.create_image(
                     x, y, image=self.new_disc, tag='animated')
             else:
-                white_disc_img = Image.open('white-disc.png')
+                white_disc_img = Image.open('./assets/white-disc.png')
                 new_disc_resize = white_disc_img.resize(
                     (20, 20), Image.LANCZOS)
                 self.new_disc = ImageTk.PhotoImage(new_disc_resize)
@@ -740,7 +740,7 @@ class AIPage(Frame):
     def show_help(self):
         self.game_help_veil = Frame(width=1000, height=700, bg='#101820')
         self.game_help_veil.place(x=0, y=0)
-        self.about_bg = Image.open('back_icon.png')
+        self.about_bg = Image.open('./assets/back_icon.png')
         self.about_bg = self.about_bg.resize((30, 30), Image.LANCZOS)
         self.about_bg = ImageTk.PhotoImage(self.about_bg)
         Button(self.game_help_veil, image=self.about_bg, bg="#fff",
@@ -782,12 +782,12 @@ class HumanPage(Frame):
         self.white_score = 0
         self.reduction_rate = 0
         # white disc instantialization
-        self.white_disc_img = Image.open('white-disc.png')
+        self.white_disc_img = Image.open('./assets/white-disc.png')
         self.white_disc_resize = self.white_disc_img.resize(
             (50, 50), Image.LANCZOS)
         self.white_disc = ImageTk.PhotoImage(self.white_disc_resize)
         # black disc instantialization
-        self.black_disc_img = Image.open('black-disc.png')
+        self.black_disc_img = Image.open('./assets/black-disc.png')
         self.black_disc_resize = self.black_disc_img.resize(
             (50, 50), Image.LANCZOS)
         self.black_disc = ImageTk.PhotoImage(self.black_disc_resize)
@@ -800,13 +800,13 @@ class HumanPage(Frame):
         self.restart_button = Button(
             text="Restart", width=15, command=self.restart_game, bg="#fff", fg="#101820", font=("fira code", 16))
         # ======== Back Button ============
-        self.back_image = Image.open('back_icon.png')
+        self.back_image = Image.open('./assets/back_icon.png')
         self.back_bg = self.back_image.resize((35, 35), Image.LANCZOS)
         self.back_bg = ImageTk.PhotoImage(self.back_bg)
         Button(image=self.back_bg, bg="#fff",
                command=self.go_back).place(relx=0.1, rely=0.08, anchor=CENTER)
         # ======== Help Button ============
-        self.help_image = Image.open('help_icon.png')
+        self.help_image = Image.open('./assets/help_icon.png')
         self.help_bg = self.help_image.resize((35, 35), Image.LANCZOS)
         self.help_bg = ImageTk.PhotoImage(self.help_bg)
         Button(image=self.help_bg, bg="#fff", command=self.show_help).place(
@@ -837,12 +837,12 @@ class HumanPage(Frame):
         self.show_available_moves()
 
     def draw_score_board(self):
-        self.score_white_disc = Image.open('white-disc.png')
+        self.score_white_disc = Image.open('./assets/white-disc.png')
         self.score_white_disc = self.score_white_disc.resize(
             (70, 70), Image.LANCZOS)
         self.score_white_disc = ImageTk.PhotoImage(self.score_white_disc)
 
-        self.score_black_disc = Image.open('black-disc.png')
+        self.score_black_disc = Image.open('./assets/black-disc.png')
         self.score_black_disc = self.score_black_disc.resize(
             (70, 70), Image.LANCZOS)
         self.score_black_disc = ImageTk.PhotoImage(self.score_black_disc)
@@ -1000,14 +1000,14 @@ class HumanPage(Frame):
 
             # Shrinking the disc
             if color == "W":
-                white_disc_img = Image.open('white-disc.png')
+                white_disc_img = Image.open('./assets/white-disc.png')
                 new_disc_resize = white_disc_img.resize(
                     (50, 50), Image.LANCZOS)
                 new_disc = ImageTk.PhotoImage(new_disc_resize)
                 self.canvas.create_image(
                     x, y, image=new_disc, tag='animated')
             else:
-                black_disc_img = Image.open('black-disc.png')
+                black_disc_img = Image.open('./assets/black-disc.png')
                 new_disc_resize = black_disc_img.resize(
                     (50, 50), Image.LANCZOS)
                 new_disc = ImageTk.PhotoImage(new_disc_resize)
@@ -1029,14 +1029,14 @@ class HumanPage(Frame):
 
             # Enlarging the disc
             if color == "W":
-                black_disc_img = Image.open('black-disc.png')
+                black_disc_img = Image.open('./assets/black-disc.png')
                 new_disc_resize = black_disc_img.resize(
                     (20, 20), Image.LANCZOS)
                 self.new_disc = ImageTk.PhotoImage(new_disc_resize)
                 self.canvas.create_image(
                     x, y, image=self.new_disc, tag='animated')
             else:
-                white_disc_img = Image.open('white-disc.png')
+                white_disc_img = Image.open('./assets/white-disc.png')
                 new_disc_resize = white_disc_img.resize(
                     (20, 20), Image.LANCZOS)
                 self.new_disc = ImageTk.PhotoImage(new_disc_resize)
@@ -1188,7 +1188,7 @@ class HumanPage(Frame):
     def show_help(self):
         self.game_help_veil = Frame(width=1000, height=700, bg='#101820')
         self.game_help_veil.place(x=0, y=0)
-        self.about_bg = Image.open('back_icon.png')
+        self.about_bg = Image.open('./assets/back_icon.png')
         self.about_bg = self.about_bg.resize((30, 30), Image.LANCZOS)
         self.about_bg = ImageTk.PhotoImage(self.about_bg)
         Button(self.game_help_veil, image=self.about_bg, bg="#fff",
