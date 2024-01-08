@@ -4,7 +4,7 @@ This repository contains graphic user interfaces (GUIs) made with the python lib
 
 <!-- Each folder contain an executable file (.exe) to download and install for use on your computer. Enjoy! -->
 
-## No. 1 - Hotel CRM
+## Hotel CRM
 
 ![bandicam 2022-09-22 09-46-12-564](https://user-images.githubusercontent.com/67712127/191704039-f40d0699-9e5a-4c52-b753-de9332e9f5ce.jpg)
 
@@ -21,7 +21,7 @@ A hotel customer relationship manager (CRM) for a make shift hotel - SERENITY. I
 - Can filter rooms based on client's preference
 - Can reserve rooms for clients.
 
-## No. 2 - Don't Hang
+## Don't Hang
 
 ![bandicam 2022-05-02 22-18-54-722](https://user-images.githubusercontent.com/67712127/166341893-8523af94-f5b3-41f7-a8df-50b8ee9c8b2d.png)
 
@@ -35,7 +35,18 @@ A more fun variation of the hangman game. In this version, you don't hang, inste
 - Press the hint button to get hints (it comes at a cost though...your score points)
 - Enjoy
 
-## No. 3 - Image Puzzle Slide
+## Othello
+
+Flank discs of opposing colors and have majority of your discs facing up at the end of the game to win.
+
+How to move:
+A move consist of "outflanking" your opponent's disc(s), then flipping the outflanked disc(s) to your color
+
+To outflank means to place your disc on the board in a way that the opposing color is bordered at each end by a disc of your color
+
+Enjoy!
+
+## Image Puzzle Slide
 
 ![bandicam 2022-09-22 09-53-00-289](https://user-images.githubusercontent.com/67712127/191704167-6b31ec81-3697-464f-8bb0-7b8cdc729e5e.jpg)
 
@@ -47,7 +58,7 @@ A fun variation of the 15 slide puzzle which utilizes an image instead of number
 - Feature to see the full image (check the help section of the game).
 - Enjoy the game.
 
-## No. 4 - TimeIt & Draw
+## TimeIt & Draw
 
 ![bandicam 2022-09-22 09-55-09-104](https://user-images.githubusercontent.com/67712127/191704245-4d1d4bee-26c0-451f-b8d2-c1e9cc80538c.jpg)
 
@@ -60,7 +71,7 @@ A simple image viewer and timer for artists like me who might like to have timed
 
 It has a pause functionality incase you need to drink water 😉 and a next image functionality just incase the pose is too difficult 😎😎
 
-## No. 5 - PlayIt
+## PlayIt
 
 ![bandicam 2022-09-22 09-28-41-506](https://user-images.githubusercontent.com/67712127/191700256-1a8034d6-7fec-4326-bf57-45e0a2834f8c.png)
 
@@ -75,31 +86,21 @@ A simple but powerful audio player. It has the following features:
 - In short, it works.
 - Enjoy!
 
-## No. 6 - Chess Clock
 
-![bandicam 2022-05-02 22-41-52-978](https://user-images.githubusercontent.com/67712127/166341999-9e396c70-fa92-4118-971c-997651aef15c.png)
-
-A simple chess clock. It works as thus:
-
-- Set the time and press start
-- If player A presses his time, his time pauses and player B time starts counting down
-- If player B presses his time, his time pauses and player A time starts counting down
-- Reset, pause functionality and a short alarm sound to indicate timeout
-
-## No. 7 - Memory Game
+## Memory Game
 
 ![bandicam 2022-09-22 09-24-58-397](https://user-images.githubusercontent.com/67712127/191700203-42767c54-65f3-4c01-878e-980ca1e9487e.png)
 
 
 A simple game where an image (on a card) is shown to you briefly and you have to find their pairs within a stipulated amount of time.
 
-## No. 8 - Connect Four
+## Connect Four
 
 ![connectFour](https://github.com/TomiwaJoseph/Tkinter-Programs/assets/67712127/34615124-07be-4352-b0c3-784c13633fea)
 
 Try to connect four disc horizontally, vertically or diagonally to win. Play with your friend or with AI. Enjoy!
 
-## No. 9 - Tower of Hanoi Puzzle
+## Tower of Hanoi Puzzle
 
 ![{2CB14390-0D33-4786-8D49-4FE94B71BC0E} png](https://github.com/TomiwaJoseph/Tkinter-Programs/assets/67712127/dfe4b11d-2ea9-44a5-ae65-e0917326c659)
 
@@ -112,19 +113,42 @@ Note:
 
 Enjoy!
 
-## No. 10 - 15 Puzzle Slide
+## Chess Clock
+
+![bandicam 2022-05-02 22-41-52-978](https://user-images.githubusercontent.com/67712127/166341999-9e396c70-fa92-4118-971c-997651aef15c.png)
+
+A simple chess clock. It works as thus:
+
+- Set the time and press start
+- If player A presses his time, his time pauses and player B time starts counting down
+- If player B presses his time, his time pauses and player A time starts counting down
+- Reset, pause functionality and a short alarm sound to indicate timeout
+
+## Tic Tac Toe
+
+![bandicam 2022-05-02 22-50-23-840](https://user-images.githubusercontent.com/67712127/166342182-0454b68a-edfb-47f7-a9d2-74cff496b906.png)
+
+The age long game of x-es and o-ohs. It has a play AI version and a play a friend version for you to enjoy. So, enjoy.
+
+## Sudoku
+
+![bandicam 2022-05-02 22-21-36-358](https://user-images.githubusercontent.com/67712127/166342279-194740ca-8a32-4b60-a2a1-8431c3c1c2cc.png)
+
+The famous sudoku in three versions. An easy 4x4 version, my wierd version (6x6) and the popular (hard) 9x9 version. You just have to try out the wierd version😍 Enjoy.
+
+## 15 Puzzle Slide
 
 ![bandicam 2022-05-02 22-15-52-338](https://user-images.githubusercontent.com/67712127/166342069-0c5160a2-0b6d-4a0c-9dae-fbdd1abc6bd0.png)
 
 A game where you arrange numbers a scrambled numbers 1-15 in increasing order. Enjoy.
 
-## No. 11 - Typing Test
+## Typing Test
 
 ![{97966B2A-D101-4C19-B4DE-12BAD87BD4BA} png](https://github.com/TomiwaJoseph/Tkinter-Programs/assets/67712127/1b46e9e5-6ea9-4157-bea5-1fa13b0d7f67)
 
 How fast and accurate are you? Test it out with this typing test app.
 
-## No. 12 - Take Note
+## Take Note
 
 ![bandicam 2022-05-02 23-38-09-207](https://user-images.githubusercontent.com/67712127/166342076-ead6452a-0d42-48f2-a3b4-5b5b4645278d.png)
 
@@ -133,7 +157,7 @@ A notepad-like tool for taking notes It has these functionalities.
 - New file, Open File, Copy, Cut, Paste, Theme, Word Count etc
 - Function that keep track of changes made to note to alert when user tries to create new note, open existing note or close the editor and there has been changes to the note.
 
-## No. 13 - Password Safe
+## Password Safe
 
 ![bandicam 2022-05-02 22-40-32-951](https://user-images.githubusercontent.com/67712127/166342098-398b7b9b-f482-4ef8-b57e-73359a3d8a7e.png)
 
@@ -148,7 +172,7 @@ A password generator and saver tool for generating and saving your passwords for
 - View your saved passwords
 - Enjoy
 
-## No. 14 - Jumble It
+## Jumble It
 
 ![bandicam 2022-05-02 22-20-04-377](https://user-images.githubusercontent.com/67712127/166342129-3ef53ec1-29b5-4a5a-a9df-0e5220e66b71.png)
 
@@ -161,21 +185,9 @@ This game is about rearranging scattered (jumbled) letters to form a correct wor
 - Use hints if you get stuck
 - Enjoy
 
-## No. 15 - Calculator
+## Calculator
 
 ![bandicam 2022-05-02 22-25-27-634](https://user-images.githubusercontent.com/67712127/166342144-4be87f2d-67d0-4489-847b-542d69992f9f.png)
 
 A simple calculator to perform simple operations like addition, multiplication, subtraction, division, square root and square.
 Enjoy.
-
-## No. 16 - Tic Tac Toe
-
-![bandicam 2022-05-02 22-50-23-840](https://user-images.githubusercontent.com/67712127/166342182-0454b68a-edfb-47f7-a9d2-74cff496b906.png)
-
-The age long game of x-es and o-ohs. It has a play AI version and a play a friend version for you to enjoy. So, enjoy.
-
-## No. 17 - Sudoku
-
-![bandicam 2022-05-02 22-21-36-358](https://user-images.githubusercontent.com/67712127/166342279-194740ca-8a32-4b60-a2a1-8431c3c1c2cc.png)
-
-The famous sudoku in three versions. An easy 4x4 version, my wierd version (6x6) and the popular (hard) 9x9 version. You just have to try out the wierd version😍 Enjoy.
