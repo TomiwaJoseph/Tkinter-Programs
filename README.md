@@ -37,6 +37,9 @@ A more fun variation of the hangman game. In this version, you don't hang, inste
 
 ## Othello
 
+![othello](https://github.com/TomiwaJoseph/Tkinter-Programs/assets/67712127/55fa75cc-20f0-47f3-b25b-bfdbf752f4ad)
+
+
 Flank discs of opposing colors and have majority of your discs facing up at the end of the game to win.
 
 How to move:
