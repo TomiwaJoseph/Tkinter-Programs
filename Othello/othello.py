@@ -47,7 +47,6 @@ class SettingsPage(Frame):
         self.root = root
         self.root.title("Othello | Human Page")
         self.root.geometry('530x350+368+179')
-        # self.root.geometry('1000x700+200+20')
         self.root.resizable(0, 0)
         # ============ UI =============
         self.canvas = Canvas(bg='#101820', width=400, height=150)
@@ -847,7 +846,7 @@ class HumanPage(Frame):
             (70, 70), Image.LANCZOS)
         self.score_black_disc = ImageTk.PhotoImage(self.score_black_disc)
 
-        # ======== disc and Time ============
+        # ======== color discs ============
         self.player1_canvas = Canvas(bg='#101820', width=150, height=170)
         self.player1_canvas.place(relx=0.12, rely=0.5, anchor=CENTER)
         self.player1_canvas.create_image(
