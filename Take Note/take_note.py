@@ -80,7 +80,7 @@ class App():
         # Add line between Save and Exit
         filemenu.add_separator()
         filemenu.add_command(
-            label='Exit', accelerator='Alt+F4', compound='left')
+            label='Exit', command=root.destroy, accelerator='Alt+F4', compound='left')
         menubar.add_cascade(label='File', menu=filemenu)
         root.config(menu=menubar)
 
