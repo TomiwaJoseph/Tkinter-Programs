@@ -156,7 +156,7 @@ class MultiPlayer(Frame):
         self.game_help_veil = Frame(width=1000, height=700)
         self.game_help_veil.place(x=0, y=0)
         # ============ APP Background =============
-        self.help_image = Image.open('./assets/54.jpg')
+        self.help_image = Image.open('./assets/bg.jpg')
         self.help_image = self.help_image.resize((1000, 700), Image.LANCZOS)
         self.help_image = ImageTk.PhotoImage(self.help_image)
         Label(self.game_help_veil, border=0,
@@ -223,5 +223,4 @@ class MultiPlayer(Frame):
                bd=0, bg='#0A1310', fg='#fff', command=lambda: self.master.destroy()).place(relx=0.67, rely=0.63, anchor="center")
 
     def start_new_game(self):
-        from multiplayer import MultiPlayer
         return self.master.switch_frame(MultiPlayer)
