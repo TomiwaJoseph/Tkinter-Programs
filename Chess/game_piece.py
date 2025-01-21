@@ -494,35 +494,24 @@ class Piece:
         # print()
 
 
-# board = [
-#     # 0    1    2    3    4    5    6    7
-#     [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],  # 0
-#     [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],  # 1
-#     [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],  # 2
-#     [' ', ' ', ' ', ' ', 'bK', ' ', ' ', ' '],  # 3
-#     [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],  # 4
-#     [' ', ' ', ' ', ' ', 'wK', ' ', ' ', ' '],  # 5
-#     [' ', ' ', ' ', 'bR', ' ', ' ', 'bR', ' '],  # 6
-#     [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],  # 7
-# ]
+board = [
+    # 0    1    2    3    4    5    6    7
+    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],  # 0
+    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],  # 1
+    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],  # 2
+    [' ', ' ', ' ', ' ', 'bR', ' ', ' ', ' '],  # 3
+    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],  # 4
+    [' ', ' ', ' ', ' ', 'wK', 'wN', ' ', ' '],  # 5
+    [' ', ' ', ' ', 'bR', ' ', ' ', ' ', ' '],  # 6
+    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],  # 7
+]
 
 # situation where opponent king is near
 # situation where the piece is protected
 # situation where the piece is not protected and the king can capture
 
-board = [
-    # A     B     C     D     E     F     G     H
-    ['bR', 'bN', 'bB', 'bQ', 'bK', 'bB', 'bN', 'bR'],  # 0
-    ['bP', 'bP', 'bP', 'bP', 'bP', 'bP', 'bP', 'bP'],  # 1
-    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],  # 2
-    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],  # 3
-    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],  # 4
-    [' ', ' ', ' ', ' ', 'wP', 'wN', ' ', ' '],  # 5
-    ['wP', 'wP', 'bQ', 'wP', ' ', ' ', 'wP', 'wP'],  # 6
-    ['wR', ' ', ' ', ' ', 'wK', ' ', 'wN', 'wR'],  # 7
-]
 
-# Piece.white_king_has_moved = True
-# a = Piece.check_if_piece_can_move(board, 7, 4, 'king',  'W')
+Piece.white_king_has_moved = True
+a = Piece.check_if_piece_can_move(board, 5, 5, 'knight',  'W')
 # a = Piece.check_if_piece_can_move(board, 5, 4, 'king',  'W')
-# print(a)
+print(a)
