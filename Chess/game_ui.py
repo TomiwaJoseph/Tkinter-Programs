@@ -150,10 +150,45 @@ class MultiPlayer(Frame):
         piece_symbol = {"rook": "R", "knight": "N",
                         "king": "K", "queen": "Q", "bishop": "B"}
         rows = {"A": 0, "B": 1, "C": 2, "D": 3, "E": 4, "F": 5, "G": 6, "H": 7}
-        white_pawns = [("D", 4), ("B", 4)]
-        black_pawns = [("E", 1), ("C", 1), ("G", 1)]
+        white_pawns = []
+        black_pawns = [("E", 1), ("C", 1), ("G", 1),]
         white_rooks = [("A", 7), ("H", 7),]
-        black_rooks = [("A", 0), ("H", 0),]
+        black_rooks = [("D", 2), ("E", 2)]
+        white_knights = [("F", 4)]
+        black_knights = []
+
+        for knight in white_knights+black_knights:
+            alpha, i = knight
+            if knight in white_knights:
+                find_tag = self.game_canvas.find_withtag(
+                    f"board-{alpha}{i}")
+                tag_coord = self.game_canvas.coords(find_tag[0])
+                get_center = Logic.get_coordinate_center(tag_coord)
+                x1, y1 = get_center
+                piece_type = "knight"
+                self.board[i][rows[alpha]] = f"w{piece_symbol[piece_type]}"
+                piece_id = self.game_canvas.create_image(x1, y1, image=self.all_images[f"white_{piece_type}"], tags=(
+                    f'w{piece_symbol[piece_type]}', f"{alpha}{i}", f"{i}-{rows[alpha]}"))
+                the_piece = Piece(
+                    i, rows[alpha], piece_type, piece_id, "W")
+                self.game_canvas.tag_bind(
+                    piece_id, "<Button-1>", lambda x: Logic.handle_piece_click(self))
+                Logic.white_pieces.append(the_piece)
+            if knight in black_knights:
+                find_tag = self.game_canvas.find_withtag(
+                    f"board-{alpha}{i}")
+                tag_coord = self.game_canvas.coords(find_tag[0])
+                get_center = Logic.get_coordinate_center(tag_coord)
+                x1, y1 = get_center
+                piece_type = "knight"
+                self.board[i][rows[alpha]] = f"b{piece_symbol[piece_type]}"
+                piece_id = self.game_canvas.create_image(
+                    x1, y1, image=self.all_images[f"black_{piece_type}"], tags=(f'b{piece_symbol[piece_type]}', f"{alpha}{i}", f"{i}-{rows[alpha]}"))
+                the_piece = Piece(
+                    i, rows[alpha], piece_type, piece_id, "B")
+                self.game_canvas.tag_bind(
+                    piece_id, "<Button-1>", lambda x: Logic.handle_piece_click(self))
+                Logic.black_pieces.append(the_piece)
 
         for rook in white_rooks+black_rooks:
             alpha, i = rook
@@ -163,7 +198,7 @@ class MultiPlayer(Frame):
                 tag_coord = self.game_canvas.coords(find_tag[0])
                 get_center = Logic.get_coordinate_center(tag_coord)
                 x1, y1 = get_center
-                piece_type = self.get_piece_color(alpha, i)
+                piece_type = "rook"
                 self.board[i][rows[alpha]] = f"w{piece_symbol[piece_type]}"
                 piece_id = self.game_canvas.create_image(x1, y1, image=self.all_images[f"white_{piece_type}"], tags=(
                     f'w{piece_symbol[piece_type]}', f"{alpha}{i}", f"{i}-{rows[alpha]}"))
@@ -178,7 +213,7 @@ class MultiPlayer(Frame):
                 tag_coord = self.game_canvas.coords(find_tag[0])
                 get_center = Logic.get_coordinate_center(tag_coord)
                 x1, y1 = get_center
-                piece_type = self.get_piece_color(alpha, i)
+                piece_type = "rook"
                 self.board[i][rows[alpha]] = f"b{piece_symbol[piece_type]}"
                 piece_id = self.game_canvas.create_image(
                     x1, y1, image=self.all_images[f"black_{piece_type}"], tags=(f'b{piece_symbol[piece_type]}', f"{alpha}{i}", f"{i}-{rows[alpha]}"))
@@ -189,13 +224,13 @@ class MultiPlayer(Frame):
                 Logic.black_pieces.append(the_piece)
 
         for _ in range(1):
-            alpha, i = "E", 7
+            alpha, i = "D", 5
             find_tag = self.game_canvas.find_withtag(
                 f"board-{alpha}{i}")
             tag_coord = self.game_canvas.coords(find_tag[0])
             get_center = Logic.get_coordinate_center(tag_coord)
             x1, y1 = get_center
-            piece_type = self.get_piece_color(alpha, i)
+            piece_type = "king"
             self.board[i][rows[alpha]] = f"w{piece_symbol[piece_type]}"
             piece_id = self.game_canvas.create_image(x1, y1, image=self.all_images[f"white_{piece_type}"], tags=(
                 f'w{piece_symbol[piece_type]}', f"{alpha}{i}", f"{i}-{rows[alpha]}"))
@@ -212,7 +247,7 @@ class MultiPlayer(Frame):
             tag_coord = self.game_canvas.coords(find_tag[0])
             get_center = Logic.get_coordinate_center(tag_coord)
             x1, y1 = get_center
-            piece_type = self.get_piece_color(alpha, i)
+            piece_type = "king"
             self.board[i][rows[alpha]] = f"b{piece_symbol[piece_type]}"
             piece_id = self.game_canvas.create_image(
                 x1, y1, image=self.all_images[f"black_{piece_type}"], tags=(f'b{piece_symbol[piece_type]}', f"{alpha}{i}", f"{i}-{rows[alpha]}"))
