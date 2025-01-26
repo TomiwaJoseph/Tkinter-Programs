@@ -197,7 +197,6 @@ class MultiPlayer(Frame):
         self.game_help_veil.place_forget()
 
     def show_game_outcome(self, winner, reason=None):
-
         self.game_result_veil = Frame(width=1000, height=700)
         self.game_result_veil.place(x=0, y=0)
         # ============ APP Background =============
