@@ -51,6 +51,7 @@ class MultiPlayer(Frame):
         # ============ Variables =============
         self.BOARD_DARK_COLOUR = "#AF8968"
         self.BOARD_LIGHT_COLOUR = "#ECDAB9"
+        self.promotion_canvas = None
         # ============ Starter functions =============
         self.board_choice = StringVar()
         self.piece_choice = StringVar()
@@ -60,7 +61,9 @@ class MultiPlayer(Frame):
         self.init_all_images()
         self.create_game_board()
         self.create_testing_pieces()
+        # self.show_game_outcome(None, "Because Ayra Starr is goddamn sexy...")
         # self.create_game_pieces()
+        # self.show_promotion_options("W", "E0", "0 4")
 
     def show_app_background(self):
         self.bg_image = Image.open('./assets/bg.jpg')
@@ -150,12 +153,14 @@ class MultiPlayer(Frame):
         piece_symbol = {"rook": "R", "knight": "N",
                         "king": "K", "queen": "Q", "bishop": "B"}
         rows = {"A": 0, "B": 1, "C": 2, "D": 3, "E": 4, "F": 5, "G": 6, "H": 7}
-        white_pawns = []
-        black_pawns = [("E", 1), ("C", 1), ("G", 1),]
-        white_rooks = [("A", 7), ("H", 7),]
-        black_rooks = [("D", 2), ("E", 2)]
-        white_knights = [("F", 4)]
+        white_pawns = [("C", 3)]
+        black_pawns = [("E", 1)]
+        black_rooks = [("H", 6), ("B", 6)]
+        white_rooks = []
+        white_knights = []
         black_knights = []
+        Piece.white_king_has_moved = True
+        Piece.black_king_has_moved = True
 
         for knight in white_knights+black_knights:
             alpha, i = knight
@@ -224,7 +229,7 @@ class MultiPlayer(Frame):
                 Logic.black_pieces.append(the_piece)
 
         for _ in range(1):
-            alpha, i = "D", 5
+            alpha, i = "B", 7
             find_tag = self.game_canvas.find_withtag(
                 f"board-{alpha}{i}")
             tag_coord = self.game_canvas.coords(find_tag[0])
@@ -241,7 +246,7 @@ class MultiPlayer(Frame):
             Logic.white_pieces.append(the_piece)
 
         for _ in range(1):
-            alpha, i = "E", 0
+            alpha, i = "H", 0
             find_tag = self.game_canvas.find_withtag(
                 f"board-{alpha}{i}")
             tag_coord = self.game_canvas.coords(find_tag[0])
@@ -372,6 +377,82 @@ class MultiPlayer(Frame):
     def set_game_duration(self):
         pass
 
+    def show_promotion_options(self, player_color, square, destination):
+        self.promotion_canvas = Canvas(
+            bg=self.BOARD_DARK_COLOUR, width=150, height=36)
+        self.promotion_canvas.place(relx=0.5, rely=0.026, anchor="center")
+        # color = Logic.color_dict[player_color]
+        player_color = player_color.lower()
+
+        queen_image = Image.open(f'./assets/pieces/{player_color}Q.png')
+        queen_image.thumbnail((30, 30))
+        self.queen_image = ImageTk.PhotoImage(queen_image)
+        self.queen_label = Label(
+            self.promotion_canvas, bg=self.BOARD_DARK_COLOUR, border=0, image=self.queen_image)
+        self.queen_label.place(relx=0.05, rely=0.5, anchor="w")
+        self.queen_label.bind(
+            "<Button-1>", lambda r: self.choose_piece("queen", square, destination))
+
+        rook_image = Image.open(f'./assets/pieces/{player_color}R.png')
+        rook_image.thumbnail((26, 26))
+        self.rook_image = ImageTk.PhotoImage(rook_image)
+        self.rook_label = Label(
+            self.promotion_canvas, bg=self.BOARD_DARK_COLOUR, border=0, image=self.rook_image)
+        self.rook_label.place(relx=0.3, rely=0.5, anchor="w")
+        self.rook_label.bind(
+            "<Button-1>", lambda r: self.choose_piece("rook", square, destination))
+
+        knight_image = Image.open(f'./assets/pieces/{player_color}N.png')
+        knight_image.thumbnail((27, 27))
+        self.knight_image = ImageTk.PhotoImage(knight_image)
+        self.knight_label = Label(
+            self.promotion_canvas, bg=self.BOARD_DARK_COLOUR, border=0, image=self.knight_image)
+        self.knight_label.place(relx=0.52, rely=0.5, anchor="w")
+        self.knight_label.bind(
+            "<Button-1>", lambda r: self.choose_piece("knight", square, destination))
+
+        bishop_image = Image.open(f'./assets/pieces/{player_color}B.png')
+        bishop_image.thumbnail((28, 28))
+        self.bishop_image = ImageTk.PhotoImage(bishop_image)
+        self.bishop_label = Label(
+            self.promotion_canvas, bg=self.BOARD_DARK_COLOUR, border=0, image=self.bishop_image)
+        self.bishop_label.place(relx=0.752, rely=0.5, anchor="w")
+        self.bishop_label.bind(
+            "<Button-1>", lambda r: self.choose_piece("bishop", square, destination))
+
+    def choose_piece(self, piece, square, destination):
+        Piece.promotion_choice = piece, square, destination
+        Logic.promotion_happenning = True
+        Logic.move_piece_to_square(self)
+
+    def show_game_outcome(self, winner, reason=None):
+        # print('result in show game outcome:', reason)
+        self.game_result_veil = Frame(width=1000, bg="orangered", height=700)
+        self.game_result_veil.place(x=0, y=0)
+        # ============ APP Background =============
+        self.winner_image = Image.open('./assets/bg.jpg')
+        self.winner_image = self.winner_image.resize(
+            (1000, 700), Image.LANCZOS)
+        self.winner_image = ImageTk.PhotoImage(self.winner_image)
+        Label(self.game_result_veil, border=0,
+              image=self.winner_image).pack()
+        winner_canvas = Canvas(self.game_result_veil, width=600, height=400)
+        winner_canvas.place(relx=0.5, rely=0.5, anchor="center")
+        if winner:
+            winner_canvas.create_text(
+                310, 160, justify="center", text=f"{winner}", fill="#0A1310", font=('Fiolex Girls', 80))
+        else:
+            winner_canvas.create_text(
+                320, 130, justify="center", text="It is a draw!", fill="#0A1310", font=('Fiolex Girls', 80))
+            winner_canvas.create_text(
+                305, 200, justify="center", text=f"{reason}", fill="#0A1310", font=('fira code', 12))
+        Button(winner_canvas, text='Play again', width=12, font=('fira code medium', 14),
+               bd=0, bg='#0A1310', fg='#fff', command=self.start_new_game).place(relx=0.25, rely=0.63, anchor="center")
+        Button(winner_canvas, text='View board', width=12, font=('fira code medium', 14),
+               bd=0, bg='#0A1310', fg='#fff', command=self.hide_game_result).place(relx=0.5, rely=0.63, anchor="center")
+        Button(winner_canvas, text='Exit game', width=12, font=('fira code medium', 14),
+               bd=0, bg='#0A1310', fg='#fff', command=lambda: self.master.destroy()).place(relx=0.75, rely=0.63, anchor="center")
+
     def show_about(self, section):
         self.game_help_veil = Frame(width=1000, height=700)
         self.game_help_veil.place(x=0, y=0)
@@ -435,6 +516,18 @@ class MultiPlayer(Frame):
 
     def hide_game_help_veil(self):
         self.game_help_veil.place_forget()
+
+    def hide_promotion_option(self):
+        self.promotion_canvas.place_forget()
+
+    def hide_game_result(self):
+        self.game_result_veil.place_forget()
+        for piece in Piece.white_partner_pieces + Piece.black_partner_pieces:
+            the_tag = self.game_canvas.find_withtag(piece)
+            self.game_canvas.tag_unbind(the_tag, "<Button-1>")
+
+    def start_new_game(self):
+        return self.master.switch_frame(MultiPlayer)
 
 
 if __name__ == '__main__':
