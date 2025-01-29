@@ -159,8 +159,43 @@ class MultiPlayer(Frame):
         white_rooks = []
         white_knights = []
         black_knights = []
+        white_bishops = []
+        black_bishops = []
         Piece.white_king_has_moved = True
         Piece.black_king_has_moved = True
+
+        for bishop in white_bishops+black_bishops:
+            alpha, i = bishop
+            if bishop in white_bishops:
+                find_tag = self.game_canvas.find_withtag(
+                    f"board-{alpha}{i}")
+                tag_coord = self.game_canvas.coords(find_tag[0])
+                get_center = Logic.get_coordinate_center(tag_coord)
+                x1, y1 = get_center
+                piece_type = "bishop"
+                self.board[i][rows[alpha]] = f"w{piece_symbol[piece_type]}"
+                piece_id = self.game_canvas.create_image(x1, y1, image=self.all_images[f"white_{piece_type}"], tags=(
+                    f'w{piece_symbol[piece_type]}', f"{alpha}{i}", f"{i}-{rows[alpha]}"))
+                the_piece = Piece(
+                    i, rows[alpha], piece_type, piece_id, "W")
+                self.game_canvas.tag_bind(
+                    piece_id, "<Button-1>", lambda x: Logic.handle_piece_click(self))
+                Logic.white_pieces.append(the_piece)
+            if bishop in black_bishops:
+                find_tag = self.game_canvas.find_withtag(
+                    f"board-{alpha}{i}")
+                tag_coord = self.game_canvas.coords(find_tag[0])
+                get_center = Logic.get_coordinate_center(tag_coord)
+                x1, y1 = get_center
+                piece_type = "bishop"
+                self.board[i][rows[alpha]] = f"b{piece_symbol[piece_type]}"
+                piece_id = self.game_canvas.create_image(
+                    x1, y1, image=self.all_images[f"black_{piece_type}"], tags=(f'b{piece_symbol[piece_type]}', f"{alpha}{i}", f"{i}-{rows[alpha]}"))
+                the_piece = Piece(
+                    i, rows[alpha], piece_type, piece_id, "B")
+                self.game_canvas.tag_bind(
+                    piece_id, "<Button-1>", lambda x: Logic.handle_piece_click(self))
+                Logic.black_pieces.append(the_piece)
 
         for knight in white_knights+black_knights:
             alpha, i = knight
