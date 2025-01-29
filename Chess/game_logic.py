@@ -7,13 +7,47 @@ class Logic:
     black_pieces = []
     king_is_in_check = False
     clicked_piece = None
-    color_dict = {"W": 'white', "B": '#1a1a1a'}
+    last_three_moves = []
+    single_move = []
+    fifty_move_counter = 0
+    promotion_happenning = False
+    color_dict = {"W": 'white', "B": 'black'}
     piece_color_dict = {"W": white_pieces, "B": black_pieces}
     light_squares = [(i, j) for i in range(8)
                      for j in range(8) if (i+j) % 2 == 0]
+    draw_positions = [
+        {
+            "white": ["king"],
+            "black": ["king"],
+        },
+        {
+            "white": ["king", "bishop"],
+            "black": ["king"],
+        },
+        {
+            "white": ["king"],
+            "black": ["king", "bishop"],
+        },
+        {
+            "white": ["king", "knight"],
+            "black": ["king"],
+        },
+        {
+            "white": ["king"],
+            "black": ["king", "knight"],
+        },
+        {
+            "white": ["king", "bishop"],
+            "black": ["king", "bishop"],
+        },
+    ]
 
     def handle_piece_click(self):
         # Piece.display_board(self.board)
+        # Piece.black_king_has_moved = True
+        # print(self.promotion_frame)
+        if self.promotion_canvas:
+            self.hide_promotion_option()
         clicked_piece = self.game_canvas.gettags("current")
         # print('clicked piece:', clicked_piece)
         id_value = self.game_canvas.find_withtag(clicked_piece[2])[0]
@@ -83,40 +117,85 @@ class Logic:
             # Logic.highlighted_squares.append((r, c))
 
     def move_piece_to_square(self):
-        clicked_squared = self.game_canvas.gettags("current")
-        # print('clicked square:', clicked_squared)
-        # if len(clicked_squared) > 2:
-        destination_r, destination_c = clicked_squared[1].split(' ')
-        the_square_clicked = clicked_squared[0]
-        square_tag = self.game_canvas.find_withtag(
-            f"board-{the_square_clicked[-2:]}")
-        # print(the_square_clicked, the_square_clicked[-2:])
-        # print(f"board-{the_square_clicked[-2:]}")
-        # print('square tag:', square_tag)
+        clicked_square = self.game_canvas.gettags("current")
+        origin_x, origin_y = Logic.clicked_piece.row, Logic.clicked_piece.column
+        clicked_piece_type = Logic.clicked_piece.piece_type
+        # print('clicked square:', clicked_square)
+
+        if clicked_square:
+            destination_r, destination_c = clicked_square[1].split(' ')
+            destination_r, destination_c = int(
+                destination_r), int(destination_c)
+            the_square_clicked = clicked_square[0]
+            # print(f"board-{the_square_clicked[-2:]}")
+            square_tag = self.game_canvas.find_withtag(
+                f"board-{the_square_clicked[-2:]}")
+            tag_coord = self.game_canvas.coords(square_tag[0])
+            get_center = Logic.get_coordinate_center(tag_coord)
+            dest_x, dest_y = get_center
+            capture_happened = self.board[destination_r][destination_c] != " "
+
+            if clicked_piece_type == "pawn" and (destination_r, destination_c) in Piece.promotion_dict[Logic.player_turn]:
+                self.show_promotion_options(
+                    Logic.player_turn, the_square_clicked, clicked_square[1])
+                return
+            else:
+                Logic.move_selected_piece(
+                    self, destination_r, destination_c, dest_x, dest_y, capture_happened)
+                # save move to track threefold repetition
+                Logic.save_move_for_threefold_repetition(
+                    clicked_piece_type, (origin_x, origin_y), (destination_r, destination_c))
+                Logic.save_last_single_move(
+                    clicked_piece_type, capture_happened)
+        else:  # pawn promotion
+            piece_type = Piece.promotion_choice[0]
+            player_color = Logic.player_turn.lower()
+            tag1 = Piece.promotion_choice[1]
+            dest_row, dest_col = Piece.promotion_choice[2].split(" ")
+            square_tag = self.game_canvas.find_withtag(f"board-{tag1}")
+            tag_coord = self.game_canvas.coords(square_tag[0])
+            get_center = Logic.get_coordinate_center(tag_coord)
+            dest_x, dest_y = get_center
+            # create new promoted piece
+            new_piece = self.game_canvas.create_image(dest_x, dest_y, image=self.all_images[f"{Logic.color_dict[Logic.player_turn]}_{piece_type}"], tags=(
+                f'w{Piece.piece_symbol_dict[piece_type]}', tag1, f"{dest_row}-{dest_col}"))
+            self.game_canvas.tag_bind(
+                new_piece, "<Button-1>", lambda x: Logic.handle_piece_click(self))
+            # delete previous pawn
+            pawn_to_promote = self.game_canvas.find_withtag(
+                f"{origin_x}-{origin_y}")
+            self.game_canvas.delete(pawn_to_promote)
+            # update piece objects
+            Logic.update_piece_objects(Logic.clicked_piece.piece_id, new_piece, (int(
+                dest_row), int(dest_col)), piece_type)
+            # update board
+            Logic.update_game_board(self, (origin_x, origin_y), (int(dest_row), int(
+                dest_col)), f'{player_color}{Piece.piece_symbol_dict[piece_type]}')
+            self.hide_promotion_option()
+            Logic.save_move_for_threefold_repetition(
+                clicked_piece_type, (origin_x, origin_y), (dest_row, dest_col))
+            Logic.save_last_single_move('pawn', False)
+
+        game_over, status = Logic.check_game_over(self.board)
+        # print('game over status', (game_over, status), Logic.player_turn)
         # print()
-        tag_coord = self.game_canvas.coords(square_tag[0])
-        get_center = Logic.get_coordinate_center(tag_coord)
-        dest_x, dest_y = get_center
-        # print('here is the destination:', (destination_r, destination_c))
-        # print('destination occupant:', self.board[int(
-        #     destination_r)][int(destination_c)])
-        # print('destination is free:', self.board[int(
-        #     destination_r)][int(destination_c)] == " ")
-        # print()
-        capture_happened = self.board[int(
-            destination_r)][int(destination_c)] != " "
-        # print('capture happend:', capture_happened)
-        the_piece = Logic.move_selected_piece(self, int(destination_r), int(
-            destination_c), dest_x, dest_y, capture_happened)
-        Logic.switch_current_player()
+        # if len(Logic.last_three_moves) == 6:
+        #     print(Logic.last_three_moves)
+        #     print()
+        if not game_over:
+            Logic.switch_current_player()
+        else:
+            # print("status:", status)
+            Logic.reveal_game_outcome(self, status)
 
     def move_selected_piece(self, dest_row, dest_col, dest_x, dest_y, captured_happened):
         piece_symbol = {"rook": "R", "knight": "N", "pawn": "P",
                         "king": "K", "queen": "Q", "bishop": "B"}
         cols = {0: "A", 1: "B", 2: "C", 3: "D", 4: "E", 5: "F", 6: "G", 7: "H"}
         # captured_piece = self.game_canvas.find_withtag("2-5")
-        Piece.double_pawn_move = None
+        # Piece.double_pawn_move = None
         piece_type = Logic.clicked_piece.piece_type
+        # print('piece type:', piece_type)
         piece_id = Logic.clicked_piece.piece_id
         origin_x, origin_y = Logic.clicked_piece.row, Logic.clicked_piece.column
         just_castled_king_side = False
@@ -137,11 +216,20 @@ class Logic:
                 Piece.black_queen_rook_has_moved = True
             elif Logic.player_turn == "B" and (origin_x, origin_y) == (0, 7):
                 Piece.black_king_rook_has_moved = True
-        if piece_type == "king":
-            if Logic.player_turn == "W":
-                Piece.white_king_has_moved = True
-            else:
-                Piece.black_king_has_moved = True
+
+        if Piece.double_pawn_move:
+            # print('reached here...')
+            r, c = Piece.double_pawn_move[0]
+            double_move_color = Piece.double_pawn_move[1]
+            if Logic.player_turn != double_move_color:
+                # print("reached too...")
+                # print(dest_row, dest_col, (r, c))
+                if ((dest_row+1, dest_col) == (r, c) and Logic.player_turn == "W") or (dest_row-1, dest_col) == (r, c) and Logic.player_turn == "B":
+                    # print('reached here too...')
+                    en_passant_piece = self.game_canvas.find_withtag(
+                        f"{r}-{c}")
+                    self.game_canvas.delete(en_passant_piece)
+                    Logic.delete_piece_from_objects(r, c)
 
         if captured_happened:
             # get the piece in the destination
@@ -156,7 +244,7 @@ class Logic:
             # check if the moved piece is a king and can be castled
             if piece_type == "king" and not Piece.white_king_has_moved and not Piece.white_king_rook_has_moved and (dest_row, dest_col) == (7, 6):
                 new_king = self.game_canvas.create_image(dest_x, dest_y, image=self.all_images[f"white_king"], tags=(
-                    'wK', f"{cols[dest_col]}{dest_row}",  f"{dest_row}-{dest_col}"))
+                    'wK', f"{cols[dest_col]}{dest_row}", f"{dest_row}-{dest_col}"))
                 # print(f"{cols[dest_col]}{dest_row}")
                 square_tag = self.game_canvas.find_withtag("board-F7")
                 tag_coord = self.game_canvas.coords(square_tag[0])
@@ -172,7 +260,7 @@ class Logic:
                 just_castled_king_side = True
             elif piece_type == "king" and not Piece.white_king_has_moved and not Piece.white_queen_rook_has_moved and (dest_row, dest_col) == (7, 2):
                 new_king = self.game_canvas.create_image(dest_x, dest_y, image=self.all_images[f"white_king"], tags=(
-                    'wK', f"{cols[dest_col]}{dest_row}",  f"{dest_row}-{dest_col}"))
+                    'wK', f"{cols[dest_col]}{dest_row}", f"{dest_row}-{dest_col}"))
                 # print(f"{cols[dest_col]}{dest_row}")
                 square_tag = self.game_canvas.find_withtag("board-D7")
                 tag_coord = self.game_canvas.coords(square_tag[0])
@@ -189,10 +277,10 @@ class Logic:
             else:
                 if piece_type == "pawn":
                     the_piece = self.game_canvas.create_image(dest_x, dest_y, image=self.all_images['white_pawn'], tags=(
-                        'wP', f"{cols[dest_col]}{dest_row}",  f"{dest_row}-{dest_col}"))
+                        'wP', f"{cols[dest_col]}{dest_row}", f"{dest_row}-{dest_col}"))
                 else:
                     the_piece = self.game_canvas.create_image(dest_x, dest_y, image=self.all_images[f"white_{piece_type}"], tags=(
-                        f'w{piece_symbol[piece_type]}', f"{cols[dest_col]}{dest_row}",  f"{dest_row}-{dest_col}"))
+                        f'w{piece_symbol[piece_type]}', f"{cols[dest_col]}{dest_row}", f"{dest_row}-{dest_col}"))
 
             if just_castled_king_side:
                 self.game_canvas.tag_bind(
@@ -221,6 +309,8 @@ class Logic:
                 Logic.update_piece_objects(
                     old_rook_obj.piece_id, new_rook, (7, 3), "rook")
             else:
+                if piece_type == "king":
+                    Piece.white_king_has_moved = True
                 self.game_canvas.tag_bind(
                     the_piece, "<Button-1>", lambda e: Logic.handle_piece_click(self))
                 # update the game board
@@ -235,7 +325,7 @@ class Logic:
             # check if the moved piece is a king and can be castled
             if piece_type == "king" and not Piece.black_king_has_moved and not Piece.black_king_rook_has_moved and (dest_row, dest_col) == (0, 6):
                 new_king = self.game_canvas.create_image(dest_x, dest_y, image=self.all_images[f"black_king"], tags=(
-                    'bK', f"{cols[dest_col]}{dest_row}",  f"{dest_row}-{dest_col}"))
+                    'bK', f"{cols[dest_col]}{dest_row}", f"{dest_row}-{dest_col}"))
                 # print(f"{cols[dest_col]}{dest_row}")
                 square_tag = self.game_canvas.find_withtag("board-F0")
                 tag_coord = self.game_canvas.coords(square_tag[0])
@@ -250,7 +340,7 @@ class Logic:
                 just_castled_king_side = True
             elif piece_type == "king" and not Piece.black_king_has_moved and not Piece.black_queen_rook_has_moved and (dest_row, dest_col) == (0, 2):
                 new_king = self.game_canvas.create_image(dest_x, dest_y, image=self.all_images[f"black_king"], tags=(
-                    'bK', f"{cols[dest_col]}{dest_row}",  f"{dest_row}-{dest_col}"))
+                    'bK', f"{cols[dest_col]}{dest_row}", f"{dest_row}-{dest_col}"))
                 # print(f"{cols[dest_col]}{dest_row}")
                 square_tag = self.game_canvas.find_withtag("board-D0")
                 tag_coord = self.game_canvas.coords(square_tag[0])
@@ -299,6 +389,8 @@ class Logic:
                 Logic.update_piece_objects(
                     old_rook_obj.piece_id, new_rook, (0, 3), "rook")
             else:
+                if piece_type == "king":
+                    Piece.black_king_has_moved = True
                 self.game_canvas.tag_bind(
                     the_piece, "<Button-1>", lambda e: Logic.handle_piece_click(self))
                 # update the game board
@@ -311,10 +403,106 @@ class Logic:
                     piece_id, the_piece, (dest_row, dest_col), piece_type)
 
         Logic.reset_all_states(self)
-        # Logic.display_board(self.board)
-        # print(len(Logic.white_pieces))
-        # print(len(Logic.black_pieces))
-        # print()
+
+    def check_game_over(board):
+        opponent_color = Piece.opponent_color_dict[Logic.player_turn]
+        opponent_player_moves = Logic.get_player_moves(
+            board, opponent_color)
+
+        king_is_in_check = Piece.check_if_king_is_in_check(
+            board, opponent_color)
+        # winning move was made
+        if king_is_in_check and not opponent_player_moves:
+            return True, ["win", Logic.player_turn]
+        # a stalemate occurred
+        elif not king_is_in_check and not opponent_player_moves:
+            return True, ["draw", "Stalemate"]
+
+        draw, reason = Logic.check_game_is_a_draw()
+        if draw:
+            # print(draw, reason)
+            return True, reason
+
+        return False, "playing"
+
+    def check_game_is_a_draw():
+        if Logic.threefold_repetition():
+            return True, ["draw", "Threefold repetition occurred..."]
+        Logic.start_pawnless_move_counter()
+        if Logic.fifty_move_counter >= 50:
+            return True, ["draw", "No pawn move or capture in the last 50 move"]
+        # Insufficient materials
+        if Logic.insufficient_materials():
+            return True, ["draw", "Insufficient materials to checkmate"]
+        return False, None
+
+    def insufficient_materials():
+        pass
+
+    def start_pawnless_move_counter():
+        if len(Logic.single_move) == 2:
+            # if the last move is a pawn move or a capture not made
+            # restart the move counter
+            white_move = Logic.single_move[0]
+            black_move = Logic.single_move[1]
+            if (white_move[0] == "pawn" or white_move[1] == True) or (black_move[0] == "pawn" or black_move[1] == True):
+                Logic.fifty_move_counter = 0
+            else:
+                # increment the counter
+                Logic.fifty_move_counter += 1
+            Logic.single_move = []
+
+    def threefold_repetition():
+        if len(Logic.last_three_moves) != 6:
+            return False
+        return (Logic.last_three_moves[0] == Logic.last_three_moves[2] == Logic.last_three_moves[4]) and (Logic.last_three_moves[1] == Logic.last_three_moves[3])
+
+    def reveal_game_outcome(self, status):
+        game_status = status[0]
+        if game_status == "win":
+            winner_color = status[1]
+            if winner_color == "W":
+                self.show_game_outcome("White wins!")
+            else:
+                self.show_game_outcome("Black wins!")
+        else:
+            reason = status[1]
+            # print('reason:', reason)
+            self.show_game_outcome(None, reason)
+        pass
+
+    def get_player_moves(board, player_color):
+        legal_moves = []
+        for row in range(8):
+            for col in range(8):
+                piece = board[row][col]
+                if piece in Piece.partners_dict[player_color]:
+                    piece_type = Piece.piece_type_dict[piece[-1]]
+                    piece_can_move = Piece.check_if_piece_can_move(
+                        board, row, col, piece_type, player_color)
+                    if piece_can_move:
+                        legal_moves.extend(piece_can_move)
+        return legal_moves
+
+    def save_move_for_threefold_repetition(piece, origin, destination):
+        the_move = f"{piece}{origin}{destination}"
+        # print(the_move)
+        if Logic.last_three_moves == []:
+            Logic.last_three_moves.append([the_move])
+        else:
+            if len(Logic.last_three_moves[-1]) == 1:
+                Logic.last_three_moves[-1].append(the_move)
+            else:
+                Logic.last_three_moves.append([the_move])
+
+        if len(Logic.last_three_moves) > 6:
+            Logic.last_three_moves.pop(0)
+
+    def save_last_single_move(piece, has_captured):
+        activity = piece, has_captured
+        Logic.single_move.append(activity)
+        # if Logic.player_turn == "W":
+        #     Logic.single_move = []
 
     def switch_current_player():
         if Logic.player_turn == "W":
@@ -323,6 +511,8 @@ class Logic:
             Logic.player_turn = "W"
 
     def update_game_board(self, origin, destination, piece):
+        # print('origin, destination, piece')
+        # print(origin, destination, piece)
         orig_r, orig_c = origin
         dest_r, dest_c = destination
         self.board[orig_r][orig_c] = " "
