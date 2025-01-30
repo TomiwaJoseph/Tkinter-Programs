@@ -8,9 +8,12 @@ class Piece:
     black_pawn_diagonals = [(1, -1), (1, 1)]
     white_first_double_moves = [(3, i) for i in range(8)]
     black_first_double_moves = [(4, i) for i in range(8)]
+    white_promotion_squares = [(0, i) for i in range(8)]
+    black_promotion_squares = [(7, i) for i in range(8)]
     white_king_init_position = (7, 4)
     black_king_init_position = (0, 4)
     double_pawn_move = None
+    promotion_choice = None
     white_king_has_moved = False
     black_king_has_moved = False
     white_king_rook_has_moved = False
@@ -25,16 +28,23 @@ class Piece:
     white_partner_pieces = ["wP", "wB", "wK", "wQ", "wN", "wR"]
     black_partner_pieces = ["bP", "bB", "bK", "bQ", "bN", "bR"]
     opponent_king_dict = {"W": "bK", "B": "wK"}
+    piece_type_dict = {"R": "rook", "N": "knight", "B": "bishop", "Q": "queen",
+                       "K": "king", "P": "pawn"}
+    piece_symbol_dict = {"rook": "R", "knight": "N",
+                         "pawn": "P", "king": "K", "queen": "Q", "bishop": "B"}
     # all_color_pieces = white_partner_pieces + black_partner_pieces
     partners_dict = {"W": white_partner_pieces, "B": black_partner_pieces}
+    promotion_dict = {"W": white_promotion_squares,
+                      "B": black_promotion_squares}
     diagonals_dict = {"W": white_pawn_diagonals, "B": black_pawn_diagonals}
 
-    def __init__(self, row, column, piece_type, piece_id, piece_color):
+    def __init__(self, row, column, piece_type, piece_id, piece_color, alt_name=None):
         self.row = row
         self.column = column
         self.piece_type = piece_type
         self.piece_id = piece_id
         self.piece_color = piece_color
+        self.alt_name = alt_name
 
     def check_if_piece_can_move(board, row, col, piece_type, player_color):
         # print('piece type:', piece_type)
@@ -61,8 +71,6 @@ class Piece:
 
     def check_if_king_is_in_check(board, color):
         opponent_color = Piece.opponent_color_dict[color]
-        piece_type_dict = {"R": "rook", "N": "knight", "B": "bishop", "Q": "queen",
-                           "K": "king", "P": "pawn"}
 
         for r in range(8):
             for c in range(8):
@@ -70,7 +78,7 @@ class Piece:
                     piece = board[r][c]
                     # print('piece:', piece)
                     is_in_check = Piece.check_piece_check(
-                        board, r, c, piece_type_dict[piece[-1]], opponent_color)
+                        board, r, c, Piece.piece_type_dict[piece[-1]], opponent_color)
                     if is_in_check:
                         return is_in_check
                     continue
@@ -86,6 +94,18 @@ class Piece:
         ori_row, ori_col = origin
         dest_row, dest_col = destination
         the_piece = board[ori_row][ori_col]
+        board_copy[ori_row][ori_col] = " "
+        board_copy[dest_row][dest_col] = the_piece
+        return board_copy
+
+    def make_enpassant_move(board, origin, destination, piece_to_remove):
+        # print(origin, destination, piece_to_remove)
+        board_copy = [r[:] for r in board]
+        ori_row, ori_col = origin
+        dest_row, dest_col = destination
+        a, b = piece_to_remove
+        the_piece = board[ori_row][ori_col]
+        board_copy[a][b] = " "
         board_copy[ori_row][ori_col] = " "
         board_copy[dest_row][dest_col] = the_piece
         return board_copy
@@ -257,9 +277,20 @@ class Piece:
             if (player_color == "W" and row == 3) or (player_color == "B" and row == 4):
                 if Piece.double_pawn_move[1] == opponent_color and abs(col-c) == 1:
                     if player_color == "W":
-                        valid_moves.append((r-1, c))
+                        en_passant_move = r-1, c
                     else:
-                        valid_moves.append((r+1, c))
+                        en_passant_move = r+1, c
+
+                    # print('en_passant_move:', en_passant_move)
+                    new_board = Piece.make_enpassant_move(
+                        board, (row, col), en_passant_move, (r, c))
+                    king_will_be_in_check = Piece.check_if_king_is_in_check(
+                        new_board, player_color)
+                    if not king_will_be_in_check:
+                        if player_color == "W":
+                            legal_moves.append((r-1, c))
+                        else:
+                            legal_moves.append((r+1, c))
 
         if valid_moves:  # if available moves
             # check if any move by the piece will expose the king
@@ -417,6 +448,7 @@ class Piece:
     def squares_king_can_move_to(board, row, col, player_color):
         directions = [(-1, 0), (1, 0), (0, 1), (0, -1),
                       (-1, 1), (-1, -1), (1, -1), (1, 1)]
+        result = []
         valid_moves = []
         legal_moves = []
 
@@ -424,21 +456,45 @@ class Piece:
         if player_color == "W":
             if not Piece.white_king_has_moved and not Piece.white_king_rook_has_moved:
                 if board[7][5] == " " and board[7][6] == " ":
-                    valid_moves.append((7, 5))
-                    valid_moves.append((7, 6))
+                    for r, c in [(7, 5), (7, 6)]:
+                        new_board = Piece.make_temp_move(
+                            board, (row, col), (r, c))
+                        result.append(Piece.check_if_king_is_in_check(
+                            new_board, player_color))
+                        if result == [False, False]:
+                            legal_moves.append((7, 5))
+                            legal_moves.append((7, 6))
             if not Piece.white_king_has_moved and not Piece.white_queen_rook_has_moved:
                 if board[7][1] == " " and board[7][2] == " " and board[7][3] == " ":
-                    valid_moves.append((7, 2))
-                    valid_moves.append((7, 3))
+                    for r, c in [(7, 2), (7, 3)]:
+                        new_board = Piece.make_temp_move(
+                            board, (row, col), (r, c))
+                        result.append(Piece.check_if_king_is_in_check(
+                            new_board, player_color))
+                        if result == [False, False]:
+                            valid_moves.append((7, 2))
+                            valid_moves.append((7, 3))
         else:
             if not Piece.black_king_has_moved and not Piece.black_king_rook_has_moved:
                 if board[0][5] == " " and board[0][6] == " ":
-                    valid_moves.append((0, 5))
-                    valid_moves.append((0, 6))
+                    for r, c in [(0, 5), (0, 6)]:
+                        new_board = Piece.make_temp_move(
+                            board, (row, col), (r, c))
+                        result.append(Piece.check_if_king_is_in_check(
+                            new_board, player_color))
+                        if result == [False, False]:
+                            valid_moves.append((0, 5))
+                            valid_moves.append((0, 6))
             if not Piece.black_king_has_moved and not Piece.black_queen_rook_has_moved:
                 if board[0][1] == " " and board[0][2] == " " and board[0][3] == " ":
-                    valid_moves.append((0, 2))
-                    valid_moves.append((0, 3))
+                    for r, c in [(0, 2), (0, 3)]:
+                        new_board = Piece.make_temp_move(
+                            board, (row, col), (r, c))
+                        result.append(Piece.check_if_king_is_in_check(
+                            new_board, player_color))
+                        if result == [False, False]:
+                            valid_moves.append((0, 2))
+                            valid_moves.append((0, 3))
 
         for dy, dx in directions:
             constant = row, col
@@ -465,19 +521,19 @@ class Piece:
 
         return list(set(legal_moves))
 
-    def check_neigbor_is_a_king(board, row, col, color):
-        directions = [(-1, 0), (1, 0), (0, 1), (0, -1),
-                      (-1, 1), (-1, -1), (1, -1), (1, 1)]
-        opponent_king = Piece.opponent_king_dict[color]
-        for i, j in directions:
-            constant = row, col
-            new_row, new_col = constant[0] + i, constant[1] + j
-            if not Piece.square_is_within_bounds(new_row, new_col):
-                break
-            if board[new_row][new_col] == opponent_king:
-                return True
+    # def check_neigbor_is_a_king(board, row, col, color):
+    #     directions = [(-1, 0), (1, 0), (0, 1), (0, -1),
+    #                   (-1, 1), (-1, -1), (1, -1), (1, 1)]
+    #     opponent_king = Piece.opponent_king_dict[color]
+    #     for i, j in directions:
+    #         constant = row, col
+    #         new_row, new_col = constant[0] + i, constant[1] + j
+    #         if not Piece.square_is_within_bounds(new_row, new_col):
+    #             break
+    #         if board[new_row][new_col] == opponent_king:
+    #             return True
 
-        return False
+    #     return False
 
     def square_is_within_bounds(row, col):
         return row >= 0 and col >= 0 and row <= 7 and col <= 7
@@ -499,10 +555,10 @@ board = [
     [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],  # 0
     [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],  # 1
     [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],  # 2
-    [' ', ' ', ' ', ' ', 'bR', ' ', ' ', ' '],  # 3
+    [' ', ' ', ' ', 'bR', 'bR', ' ', ' ', ' '],  # 3
     [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],  # 4
     [' ', ' ', ' ', ' ', 'wK', 'wN', ' ', ' '],  # 5
-    [' ', ' ', ' ', 'bR', ' ', ' ', ' ', ' '],  # 6
+    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],  # 6
     [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],  # 7
 ]
 
@@ -511,7 +567,7 @@ board = [
 # situation where the piece is not protected and the king can capture
 
 
-Piece.white_king_has_moved = True
-a = Piece.check_if_piece_can_move(board, 5, 5, 'knight',  'W')
+# Piece.white_king_has_moved = True
+# a = Piece.check_if_piece_can_move(board, 5, 5, 'knight',  'W')
 # a = Piece.check_if_piece_can_move(board, 5, 4, 'king',  'W')
-print(a)
+# print(a)
