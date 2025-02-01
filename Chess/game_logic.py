@@ -5,17 +5,23 @@ class Logic:
     player_turn = "W"
     white_pieces = []
     black_pieces = []
+    board_light_squares = []
+    board_dark_squares = []
     king_is_in_check = False
     clicked_piece = None
     last_three_moves = []
     single_move = []
     fifty_move_counter = 0
     promotion_happenning = False
+    BOARD_LIGHT_COLOUR = None
+    BOARD_DARK_COLOUR = None
+    CURRENT_BOARD_THEME = "Default"
+    CURRENT_PIECE_THEME = "Default"
     color_dict = {"W": 'white', "B": 'black'}
     piece_color_dict = {"W": white_pieces, "B": black_pieces}
     light_squares = [(i, j) for i in range(8)
                      for j in range(8) if (i+j) % 2 == 0]
-    draw_positions = [
+    draw_pieces = [
         {
             "white": ["king"],
             "black": ["king"],
@@ -37,10 +43,28 @@ class Logic:
             "black": ["king", "knight"],
         },
         {
-            "white": ["king", "bishop"],
-            "black": ["king", "bishop"],
+            "white": ["king", "light_square_bishop"],
+            "black": ["king", "light_square_bishop"],
+        },
+        {
+            "white": ["king", "dark_square_bishop"],
+            "black": ["king", "dark_square_bishop"],
         },
     ]
+
+    def reset_all_variables():
+        Logic.player_turn = "W"
+        Logic.white_pieces = []
+        Logic.black_pieces = []
+        Logic.king_is_in_check = False
+        Logic.clicked_piece = None
+        Logic.last_three_moves = []
+        Logic.single_move = []
+        Logic.fifty_move_counter = 0
+        Logic.promotion_happenning = False
+        Logic.color_dict = {"W": 'white', "B": 'black'}
+        Logic.piece_color_dict = {
+            "W": Logic.white_pieces, "B": Logic.black_pieces}
 
     def handle_piece_click(self):
         # Piece.display_board(self.board)
@@ -54,6 +78,9 @@ class Logic:
         # print('id value:', id_value)
         piece_object = Logic.get_piece_object(id_value)
         # print('piece object:', piece_object)
+        # print('piece type:', piece_object.piece_type)
+        # print('piece alt name:', piece_object.alt_name)
+        # print()
         # print('current player color:', Logic.player_turn)
         # if piece_object:
         #     print('piece color:', piece_object.piece_color)
@@ -243,32 +270,32 @@ class Logic:
         if Logic.player_turn == "W":
             # check if the moved piece is a king and can be castled
             if piece_type == "king" and not Piece.white_king_has_moved and not Piece.white_king_rook_has_moved and (dest_row, dest_col) == (7, 6):
-                new_king = self.game_canvas.create_image(dest_x, dest_y, image=self.all_images[f"white_king"], tags=(
-                    'wK', f"{cols[dest_col]}{dest_row}", f"{dest_row}-{dest_col}"))
-                # print(f"{cols[dest_col]}{dest_row}")
                 square_tag = self.game_canvas.find_withtag("board-F7")
                 tag_coord = self.game_canvas.coords(square_tag[0])
                 get_center = Logic.get_coordinate_center(tag_coord)
                 rook_dest_x, rook_dest_y = get_center
+                # print(f"{cols[dest_col]}{dest_row}")
                 # print("root destination:", (rook_dest_x, rook_dest_y))
-                new_rook = self.game_canvas.create_image(rook_dest_x, rook_dest_y, image=self.all_images[f"white_rook"], tags=(
-                    'wR', "F7",  "7-5"))
+                new_king = self.game_canvas.create_image(
+                    dest_x, dest_y, image=self.all_images[f"white_king"], tags=('wK', "G7", "7-6"))
+                new_rook = self.game_canvas.create_image(
+                    rook_dest_x, rook_dest_y, image=self.all_images[f"white_rook"], tags=('wR', "F7",  "7-5"))
                 previous_king = self.game_canvas.find_withtag("7-4")
                 previous_rook = self.game_canvas.find_withtag("7-7")
                 self.game_canvas.delete(previous_king)
                 self.game_canvas.delete(previous_rook)
                 just_castled_king_side = True
             elif piece_type == "king" and not Piece.white_king_has_moved and not Piece.white_queen_rook_has_moved and (dest_row, dest_col) == (7, 2):
-                new_king = self.game_canvas.create_image(dest_x, dest_y, image=self.all_images[f"white_king"], tags=(
-                    'wK', f"{cols[dest_col]}{dest_row}", f"{dest_row}-{dest_col}"))
-                # print(f"{cols[dest_col]}{dest_row}")
                 square_tag = self.game_canvas.find_withtag("board-D7")
                 tag_coord = self.game_canvas.coords(square_tag[0])
                 get_center = Logic.get_coordinate_center(tag_coord)
                 rook_dest_x, rook_dest_y = get_center
+                # print(f"{cols[dest_col]}{dest_row}")
                 # print("root destination:", (rook_dest_x, rook_dest_y))
-                new_rook = self.game_canvas.create_image(rook_dest_x, rook_dest_y, image=self.all_images[f"white_rook"], tags=(
-                    'wR', "D7",  "7-3"))
+                new_king = self.game_canvas.create_image(
+                    dest_x, dest_y, image=self.all_images[f"white_king"], tags=('wK', "C7", "7-2"))
+                new_rook = self.game_canvas.create_image(
+                    rook_dest_x, rook_dest_y, image=self.all_images[f"white_rook"], tags=('wR', "D7",  "7-3"))
                 previous_king = self.game_canvas.find_withtag("7-4")
                 previous_rook = self.game_canvas.find_withtag("7-0")
                 self.game_canvas.delete(previous_king)
@@ -403,6 +430,7 @@ class Logic:
                     piece_id, the_piece, (dest_row, dest_col), piece_type)
 
         Logic.reset_all_states(self)
+        # Logic.display_board(self.board)
 
     def check_game_over(board):
         opponent_color = Piece.opponent_color_dict[Logic.player_turn]
@@ -420,7 +448,6 @@ class Logic:
 
         draw, reason = Logic.check_game_is_a_draw()
         if draw:
-            # print(draw, reason)
             return True, reason
 
         return False, "playing"
@@ -437,7 +464,31 @@ class Logic:
         return False, None
 
     def insufficient_materials():
-        pass
+        if Logic.remaining_pieces_will_lead_to_draw():
+            return True
+        return False
+
+    def remaining_pieces_will_lead_to_draw():
+        white_pieces = sorted([i.piece_type for i in Logic.white_pieces])
+        black_pieces = sorted([i.piece_type for i in Logic.black_pieces])
+        len_white_p = len(white_pieces)
+        len_black_p = len(black_pieces)
+        if len_white_p == 1 and len_black_p == 1:
+            return True
+        else:
+            if len_white_p == 2 and len_black_p == 2:
+                if "bishop" in black_pieces and "bishop" in white_pieces:
+                    white_bishop = [
+                        i.alt_name for i in Logic.white_pieces if i.piece_type == "bishop"][0]
+                    black_bishop = [
+                        i.alt_name for i in Logic.black_pieces if i.piece_type == "bishop"][0]
+                    white_pieces = [f"{white_bishop}_bishop", "king"]
+                    black_pieces = [f"{black_bishop}_bishop", "king"]
+
+            for position in Logic.draw_pieces:
+                if sorted(position['white']) == white_pieces and sorted(position['black']) == black_pieces:
+                    return True
+        return False
 
     def start_pawnless_move_counter():
         if len(Logic.single_move) == 2:
@@ -530,12 +581,16 @@ class Logic:
     def update_piece_objects(old_id, new_id, destination, piece_type):
         current_player_pieces = Logic.piece_color_dict[Logic.player_turn]
         row, col = destination
-        for index, value in enumerate(current_player_pieces):
-            if value.piece_id == old_id:
+        for index, cur_piece in enumerate(current_player_pieces):
+            if cur_piece.piece_id == old_id:
                 break
 
         # delete previous object and create new object
-        piece = Piece(row, col, piece_type, new_id, Logic.player_turn)
+        if piece_type == "bishop":
+            square_color = cur_piece.alt_name
+            piece = Piece(row, col, piece_type, new_id, square_color)
+        else:
+            piece = Piece(row, col, piece_type, new_id)
         Logic.piece_color_dict[Logic.player_turn].pop(index)
         Logic.piece_color_dict[Logic.player_turn].append(piece)
 
@@ -571,10 +626,10 @@ class Logic:
                 f"board-{parsed_row_col}")
             if (x, y) in Logic.light_squares:
                 self.game_canvas.itemconfig(
-                    the_square, fill=self.BOARD_LIGHT_COLOUR)
+                    the_square, fill=Logic.BOARD_LIGHT_COLOUR)
             else:
                 self.game_canvas.itemconfig(
-                    the_square, fill=self.BOARD_DARK_COLOUR)
+                    the_square, fill=Logic.BOARD_DARK_COLOUR)
 
     def get_coordinate_center(coordinate):
         x1, y1, x2, y2 = coordinate
