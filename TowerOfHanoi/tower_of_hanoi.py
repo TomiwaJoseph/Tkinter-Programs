@@ -167,10 +167,10 @@ class MainPage(Frame):
         self.dev_bg = ImageTk.PhotoImage(self.dev_bg)
         Button(self.about_developer_veil, image=self.dev_bg, bg="#fff",
                command=lambda: self.hide_menu_veil('developer')).place(x=20, y=20)
-        a = "I am Tomiwa Joseph, a web and software developer."
+        a = "I am Tomiwa Joseph, a software developer."
         b = "\nI am passionate about bringing both "
-        c = "the technical and \nvisual aspects of digital products to life. \nAs a web and "
-        d = "software developer, I enjoy bridging the gap\nbetween web development and design. "
+        c = "the technical and \nvisual aspects of digital products to life. \nAs a "
+        d = "software developer, I enjoy bridging the gap\nbetween development and design. "
         e = "My goal always is \nto build scalable, optimized user-friendly,"
         f = "interactive, \naccessible, secure, fast, responsive and feature-rich \napplications."
         about_text = a + b + c + d + e + f
