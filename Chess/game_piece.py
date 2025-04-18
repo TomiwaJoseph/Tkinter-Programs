@@ -1,5 +1,3 @@
-# from copy import deepcopy
-
 
 class Piece:
     black_pawns_init_positon = [(1, i) for i in range(8)]
@@ -13,6 +11,7 @@ class Piece:
     white_king_init_position = (7, 4)
     black_king_init_position = (0, 4)
     double_pawn_move = None
+    last_move = {}
     promotion_choice = None
     white_king_has_moved = False
     black_king_has_moved = False
@@ -32,22 +31,19 @@ class Piece:
                        "K": "king", "P": "pawn"}
     piece_symbol_dict = {"rook": "R", "knight": "N",
                          "pawn": "P", "king": "K", "queen": "Q", "bishop": "B"}
-    # all_color_pieces = white_partner_pieces + black_partner_pieces
     partners_dict = {"W": white_partner_pieces, "B": black_partner_pieces}
     promotion_dict = {"W": white_promotion_squares,
                       "B": black_promotion_squares}
     diagonals_dict = {"W": white_pawn_diagonals, "B": black_pawn_diagonals}
 
-    def __init__(self, row, column, piece_type, piece_id, piece_color, alt_name=None):
+    def __init__(self, row, column, piece_type, piece_id, alt_name=None):
         self.row = row
         self.column = column
         self.piece_type = piece_type
         self.piece_id = piece_id
-        self.piece_color = piece_color
         self.alt_name = alt_name
 
     def check_if_piece_can_move(board, row, col, piece_type, player_color):
-        # print('piece type:', piece_type)
         if piece_type == "pawn":
             checker = Piece.squares_pawn_can_move_to(
                 board, row, col, player_color)
@@ -76,7 +72,6 @@ class Piece:
             for c in range(8):
                 if board[r][c] in Piece.partners_dict[opponent_color]:
                     piece = board[r][c]
-                    # print('piece:', piece)
                     is_in_check = Piece.check_piece_check(
                         board, r, c, Piece.piece_type_dict[piece[-1]], opponent_color)
                     if is_in_check:
@@ -86,10 +81,6 @@ class Piece:
         return False
 
     def make_temp_move(board, origin, destination):
-        # print('origin:', origin)
-        # print('destination:', destination)
-        # print('the piece:', board[origin[0]][origin[1]])
-        # board_copy = deepcopy(board)
         board_copy = [r[:] for r in board]
         ori_row, ori_col = origin
         dest_row, dest_col = destination
@@ -99,7 +90,6 @@ class Piece:
         return board_copy
 
     def make_enpassant_move(board, origin, destination, piece_to_remove):
-        # print(origin, destination, piece_to_remove)
         board_copy = [r[:] for r in board]
         ori_row, ori_col = origin
         dest_row, dest_col = destination
@@ -118,8 +108,6 @@ class Piece:
                     return (r, c)
 
     def check_piece_check(board, row, col, piece_type, color):
-        # Piece.display_board(board)
-        # print('piece type:', piece_type)
         if piece_type == "king":
             return Piece.check_king_space(board, row, col, color)
         if piece_type == "queen":
@@ -134,8 +122,6 @@ class Piece:
             return Piece.get_pawn_check(board, row, col, color)
 
     def check_king_space(board, row, col, player_color):
-        # print(player_color)
-        # Piece.display_board(board)
         directions = [(-1, 0), (1, 0), (0, 1), (0, -1),
                       (-1, 1), (-1, -1), (1, -1), (1, 1)]
         for dy, dx in directions:
@@ -144,7 +130,6 @@ class Piece:
             if not Piece.square_is_within_bounds(new_row, new_col):
                 break
 
-            # print('opponent king:', Piece.opponent_king_dict[player_color])
             if board[new_row][new_col] == Piece.opponent_king_dict[player_color]:
                 return True
 
@@ -238,6 +223,7 @@ class Piece:
     def squares_pawn_can_move_to(board, row, col, player_color):
         valid_moves = []
         legal_moves = []
+        opponent_color = Piece.opponent_color_dict[player_color]
 
         # check if pawn can capture diagonally
         for dy, dx in Piece.diagonals_dict[player_color]:
@@ -271,8 +257,7 @@ class Piece:
                     valid_moves.append((row+1, col))
 
         # check for En passant
-        if Piece.double_pawn_move:
-            opponent_color = Piece.opponent_color_dict[player_color]
+        if Piece.double_pawn_move and Piece.last_move.get(opponent_color, None) == Piece.double_pawn_move[0]:
             r, c = Piece.double_pawn_move[0]
             if (player_color == "W" and row == 3) or (player_color == "B" and row == 4):
                 if Piece.double_pawn_move[1] == opponent_color and abs(col-c) == 1:
@@ -281,7 +266,6 @@ class Piece:
                     else:
                         en_passant_move = r+1, c
 
-                    # print('en_passant_move:', en_passant_move)
                     new_board = Piece.make_enpassant_move(
                         board, (row, col), en_passant_move, (r, c))
                     king_will_be_in_check = Piece.check_if_king_is_in_check(
@@ -367,8 +351,6 @@ class Piece:
                 constant = new_row, new_col
                 valid_moves.append((new_row, new_col))
 
-        # print('valid moves:', valid_moves)
-
         if valid_moves:  # if available moves
             # check if any move by the piece will expose the king
             for move in valid_moves:
@@ -448,7 +430,6 @@ class Piece:
     def squares_king_can_move_to(board, row, col, player_color):
         directions = [(-1, 0), (1, 0), (0, 1), (0, -1),
                       (-1, 1), (-1, -1), (1, -1), (1, 1)]
-        result = []
         valid_moves = []
         legal_moves = []
 
@@ -456,45 +437,49 @@ class Piece:
         if player_color == "W":
             if not Piece.white_king_has_moved and not Piece.white_king_rook_has_moved:
                 if board[7][5] == " " and board[7][6] == " ":
+                    result = []
                     for r, c in [(7, 5), (7, 6)]:
                         new_board = Piece.make_temp_move(
                             board, (row, col), (r, c))
                         result.append(Piece.check_if_king_is_in_check(
                             new_board, player_color))
-                        if result == [False, False]:
-                            legal_moves.append((7, 5))
-                            legal_moves.append((7, 6))
+                    if result == [False, False]:
+                        legal_moves.append((7, 5))
+                        legal_moves.append((7, 6))
             if not Piece.white_king_has_moved and not Piece.white_queen_rook_has_moved:
                 if board[7][1] == " " and board[7][2] == " " and board[7][3] == " ":
+                    result = []
                     for r, c in [(7, 2), (7, 3)]:
                         new_board = Piece.make_temp_move(
                             board, (row, col), (r, c))
                         result.append(Piece.check_if_king_is_in_check(
                             new_board, player_color))
-                        if result == [False, False]:
-                            valid_moves.append((7, 2))
-                            valid_moves.append((7, 3))
+                    if result == [False, False]:
+                        valid_moves.append((7, 2))
+                        valid_moves.append((7, 3))
         else:
             if not Piece.black_king_has_moved and not Piece.black_king_rook_has_moved:
                 if board[0][5] == " " and board[0][6] == " ":
+                    result = []
                     for r, c in [(0, 5), (0, 6)]:
                         new_board = Piece.make_temp_move(
                             board, (row, col), (r, c))
                         result.append(Piece.check_if_king_is_in_check(
                             new_board, player_color))
-                        if result == [False, False]:
-                            valid_moves.append((0, 5))
-                            valid_moves.append((0, 6))
+                    if result == [False, False]:
+                        valid_moves.append((0, 5))
+                        valid_moves.append((0, 6))
             if not Piece.black_king_has_moved and not Piece.black_queen_rook_has_moved:
                 if board[0][1] == " " and board[0][2] == " " and board[0][3] == " ":
+                    result = []
                     for r, c in [(0, 2), (0, 3)]:
                         new_board = Piece.make_temp_move(
                             board, (row, col), (r, c))
                         result.append(Piece.check_if_king_is_in_check(
                             new_board, player_color))
-                        if result == [False, False]:
-                            valid_moves.append((0, 2))
-                            valid_moves.append((0, 3))
+                    if result == [False, False]:
+                        valid_moves.append((0, 2))
+                        valid_moves.append((0, 3))
 
         for dy, dx in directions:
             constant = row, col
@@ -514,26 +499,10 @@ class Piece:
                 new_board = Piece.make_temp_move(board, (row, col), move)
                 king_will_be_in_check = Piece.check_if_king_is_in_check(
                     new_board, player_color)
-                # print('king cannot go there...:', king_will_be_in_check)
-                # print()
                 if not king_will_be_in_check:
                     legal_moves.append(move)
 
         return list(set(legal_moves))
-
-    # def check_neigbor_is_a_king(board, row, col, color):
-    #     directions = [(-1, 0), (1, 0), (0, 1), (0, -1),
-    #                   (-1, 1), (-1, -1), (1, -1), (1, 1)]
-    #     opponent_king = Piece.opponent_king_dict[color]
-    #     for i, j in directions:
-    #         constant = row, col
-    #         new_row, new_col = constant[0] + i, constant[1] + j
-    #         if not Piece.square_is_within_bounds(new_row, new_col):
-    #             break
-    #         if board[new_row][new_col] == opponent_king:
-    #             return True
-
-    #     return False
 
     def square_is_within_bounds(row, col):
         return row >= 0 and col >= 0 and row <= 7 and col <= 7
@@ -543,31 +512,3 @@ class Piece:
             return (row >= 0 and col >= 0 and row <= 7 and col <= 7) and board[row][col] == " "
         except IndexError:
             return False
-
-    def display_board(board):
-        for i in board:
-            print(i, end='\n')
-        # print()
-
-
-board = [
-    # 0    1    2    3    4    5    6    7
-    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],  # 0
-    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],  # 1
-    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],  # 2
-    [' ', ' ', ' ', 'bR', 'bR', ' ', ' ', ' '],  # 3
-    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],  # 4
-    [' ', ' ', ' ', ' ', 'wK', 'wN', ' ', ' '],  # 5
-    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],  # 6
-    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],  # 7
-]
-
-# situation where opponent king is near
-# situation where the piece is protected
-# situation where the piece is not protected and the king can capture
-
-
-# Piece.white_king_has_moved = True
-# a = Piece.check_if_piece_can_move(board, 5, 5, 'knight',  'W')
-# a = Piece.check_if_piece_can_move(board, 5, 4, 'king',  'W')
-# print(a)
