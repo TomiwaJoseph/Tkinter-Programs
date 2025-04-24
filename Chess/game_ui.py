@@ -139,15 +139,15 @@ class MultiPlayer(Frame):
         piece_symbol = {"rook": "R", "knight": "N",
                         "king": "K", "queen": "Q", "bishop": "B"}
         rows = {"A": 0, "B": 1, "C": 2, "D": 3, "E": 4, "F": 5, "G": 6, "H": 7}
-        white_pawns = [("D", 4), ("F", 6), ("G", 6), ("H", 6)]
+        white_pawns = [("D", 4), ("F", 6), ("G", 5), ("H", 4)]
         black_pawns = [("G", 1), ("H", 1), ("E", 2)]
         black_rooks = [("F", 0)]
         white_rooks = [("A", 7), ("H", 7)]
-        white_queen = [("H", 3)]
+        white_queen = []
         black_queen = [("E", 1)]
-        white_knights = [("E", 3), ("E", 4)]
+        white_knights = [("E", 3), ("G", 4)]
         black_knights = []
-        white_bishops = [("D", 5, 'light_square')]
+        white_bishops = [("D", 5, "light_square"), ("F", 7, "light_square")]
         black_bishops = [("F", 2, 'dark_square')]
         # Piece.white_king_has_moved = True
         Piece.black_king_has_moved = True
@@ -325,7 +325,7 @@ class MultiPlayer(Frame):
             Logic.white_pieces.append(the_piece)
 
         for _ in range(1):
-            alpha, i = "G", 0
+            alpha, i = "F", 5
             find_tag = self.game_canvas.find_withtag(
                 f"board-{alpha}{i}")
             tag_coord = self.game_canvas.coords(find_tag[0])
@@ -507,7 +507,6 @@ class MultiPlayer(Frame):
         Logic.move_piece_to_square(self)
 
     def show_game_outcome(self, winner, reason=None):
-        # print('result in show game outcome:', reason)
         self.game_result_veil = Frame(width=1000, bg="orangered", height=700)
         self.game_result_veil.place(x=0, y=0)
         # ============ APP Background =============
