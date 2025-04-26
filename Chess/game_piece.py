@@ -100,13 +100,6 @@ class Piece:
         board_copy[dest_row][dest_col] = the_piece
         return board_copy
 
-    def get_king_location(board, color):
-        king_dict = {"W": "wK", "B": "bK"}
-        for r in range(8):
-            for c in range(8):
-                if board[r][c] == king_dict[color]:
-                    return (r, c)
-
     def check_piece_check(board, row, col, piece_type, color):
         if piece_type == "king":
             return Piece.check_king_space(board, row, col, color)
@@ -496,10 +489,12 @@ class Piece:
         if valid_moves:  # if available moves
             # check if any move by the piece will expose the king
             for move in valid_moves:
+                n_row, n_col = move
                 new_board = Piece.make_temp_move(board, (row, col), move)
                 king_will_be_in_check = Piece.check_if_king_is_in_check(
                     new_board, player_color)
-                if not king_will_be_in_check:
+                move_is_near_king = Piece.check_king_space(new_board, n_row, n_col, player_color)
+                if not king_will_be_in_check and not move_is_near_king:
                     legal_moves.append(move)
 
         return list(set(legal_moves))
@@ -512,3 +507,9 @@ class Piece:
             return (row >= 0 and col >= 0 and row <= 7 and col <= 7) and board[row][col] == " "
         except IndexError:
             return False
+
+    # for debugging
+    # def display_board(board):
+    #     for i in board:
+    #         print(i, end='\n')
+    #     print()
