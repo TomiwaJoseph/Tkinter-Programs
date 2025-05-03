@@ -4,6 +4,30 @@ This repository contains graphic user interfaces (GUIs) made with the python lib
 
 <!-- Each folder contain an executable file (.exe) to download and install for use on your computer. Enjoy! -->
 
+## Naija Checkers
+
+![{3C0BA725-B4F2-43EC-A617-C75B41DE0FB0}](https://github.com/user-attachments/assets/307943d0-bfb1-4dd3-a9eb-1269e9ba2653)
+
+The checkers game but with a few changes according to how it is played in most places in Nigeria. Features of the app includes:
+
+- Color indicators of mandatory captures / capture options
+- Ability to choose capture options
+- Ability of the queen/king to move in any direction
+- Multiple captures are possible
+- others...
+
+## Chess
+
+![{A366C0C1-0C66-4321-8C05-AC60379516A1}](https://github.com/user-attachments/assets/195dc5a4-43bb-42a2-a594-d535c8ecb84c)
+
+A simple chess application. Features of the app:
+
+- Initial pawn move (Two Squares)
+- Castling (King and Queen side)
+- Pawn Promotion, En Passant
+- Check, Checkmate, Draw and Stalemate detection
+- Option to change board and piece themes... and others.
+
 ## Hotel CRM
 
 ![bandicam 2022-09-22 09-46-12-564](https://user-images.githubusercontent.com/67712127/191704039-f40d0699-9e5a-4c52-b753-de9332e9f5ce.jpg)
@@ -129,7 +153,7 @@ A simple chess clock. It works as thus:
 
 ## Tic Tac Toe
 
-![bandicam 2022-05-02 22-50-23-840](https://user-images.githubusercontent.com/67712127/166342182-0454b68a-edfb-47f7-a9d2-74cff496b906.png)
+![{7B8D212D-B43D-4F3D-9B13-B1B7B8635F86}](https://github.com/user-attachments/assets/25de57e1-5168-41e2-a1b0-ff43287991d0)
 
 The age long game of x-es and o-ohs. It has a play AI version and a play a friend version for you to enjoy. So, enjoy.
 
