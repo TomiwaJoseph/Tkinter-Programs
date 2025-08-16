@@ -35,20 +35,18 @@ A simple chess application. Features of the app:
 A single suit solitaire application
 
 Features includes:
-◾ One single suit (heart, spade, club or diamond)
-◾ Tap-to-move and drag-and-drop functionality
-◾ Moves card to foundation when possible
-◾ Multiple color schemes and card back designs... and others.
+
+- One single suit (heart, spade, club or diamond)
+- Tap-to-move and drag-and-drop functionality
+- Moves card to foundation when possible
+- Multiple color schemes and card back designs... and others.
 
 Future improvements & updates:
-◾ Undo function
-◾ Hints
-◾ Allow multiple suits
-◾ Calming ambient background music
 
-# <<<<<<< HEAD
-
-> > > > > > > 86db1bfe2acd0252ce2f80ff5b25ee4a488f98c5
+- Undo function
+- Hints
+- Allow multiple suits
+- Calming ambient background music
 
 ## Hotel CRM
 
