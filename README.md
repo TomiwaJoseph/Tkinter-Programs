@@ -28,10 +28,27 @@ A simple chess application. Features of the app:
 - Check, Checkmate, Draw and Stalemate detection
 - Option to change board and piece themes... and others.
 
+## Spider Solitaire
+
+<img width="751" height="712" alt="solitaire" src="https://github.com/user-attachments/assets/46b69ad3-1129-4d89-bb29-802488e0d792" />
+
+A single suit solitaire application
+
+Features includes:
+◾ One single suit (heart, spade, club or diamond)
+◾ Tap-to-move and drag-and-drop functionality
+◾ Moves card to foundation when possible
+◾ Multiple color schemes and card back designs... and others.
+
+Future improvements & updates:
+◾ Undo function
+◾ Hints
+◾ Allow multiple suits
+◾ Calming ambient background music
+
 ## Hotel CRM
 
 ![bandicam 2022-09-22 09-46-12-564](https://user-images.githubusercontent.com/67712127/191704039-f40d0699-9e5a-4c52-b753-de9332e9f5ce.jpg)
-
 
 A hotel customer relationship manager (CRM) for a make shift hotel - SERENITY. I don't know how a hotel management system really looks like in real life, so bear with me 😅. It has an admin page where he oversees the hotel management and a staff feature for the reservation. Features of the app:
 
@@ -63,7 +80,6 @@ A more fun variation of the hangman game. In this version, you don't hang, inste
 
 ![othello](https://github.com/TomiwaJoseph/Tkinter-Programs/assets/67712127/55fa75cc-20f0-47f3-b25b-bfdbf752f4ad)
 
-
 Flank discs of opposing colors and have majority of your discs facing up at the end of the game to win.
 
 How to move:
@@ -89,7 +105,6 @@ A fun variation of the 15 slide puzzle which utilizes an image instead of number
 
 ![bandicam 2022-09-22 09-55-09-104](https://user-images.githubusercontent.com/67712127/191704245-4d1d4bee-26c0-451f-b8d2-c1e9cc80538c.jpg)
 
-
 A simple image viewer and timer for artists like me who might like to have timed drawing sessions. Its working is simple:
 
 - Select the images you want to draw or sketch
@@ -102,7 +117,6 @@ It has a pause functionality incase you need to drink water 😉 and a next imag
 
 ![bandicam 2022-09-22 09-28-41-506](https://user-images.githubusercontent.com/67712127/191700256-1a8034d6-7fec-4326-bf57-45e0a2834f8c.png)
 
-
 A simple but powerful audio player. It has the following features:
 
 - Play, pause, next, previous funtionality
@@ -113,11 +127,9 @@ A simple but powerful audio player. It has the following features:
 - In short, it works.
 - Enjoy!
 
-
 ## Memory Game
 
 ![bandicam 2022-09-22 09-24-58-397](https://user-images.githubusercontent.com/67712127/191700203-42767c54-65f3-4c01-878e-980ca1e9487e.png)
-
 
 A simple game where an image (on a card) is shown to you briefly and you have to find their pairs within a stipulated amount of time.
 
