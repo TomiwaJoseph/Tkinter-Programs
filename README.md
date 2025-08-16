@@ -28,19 +28,12 @@ A simple chess application. Features of the app:
 - Check, Checkmate, Draw and Stalemate detection
 - Option to change board and piece themes... and others.
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 86db1bfe2acd0252ce2f80ff5b25ee4a488f98c5
 ## Spider Solitaire
 
 <img width="751" height="712" alt="solitaire" src="https://github.com/user-attachments/assets/46b69ad3-1129-4d89-bb29-802488e0d792" />
 
 A single suit solitaire application
-<<<<<<< HEAD
 
-=======
->>>>>>> 86db1bfe2acd0252ce2f80ff5b25ee4a488f98c5
 Features includes:
 ◾ One single suit (heart, spade, club or diamond)
 ◾ Tap-to-move and drag-and-drop functionality
@@ -53,10 +46,10 @@ Future improvements & updates:
 ◾ Allow multiple suits
 ◾ Calming ambient background music
 
-<<<<<<< HEAD
-=======
+# <<<<<<< HEAD
 
->>>>>>> 86db1bfe2acd0252ce2f80ff5b25ee4a488f98c5
+> > > > > > > 86db1bfe2acd0252ce2f80ff5b25ee4a488f98c5
+
 ## Hotel CRM
 
 ![bandicam 2022-09-22 09-46-12-564](https://user-images.githubusercontent.com/67712127/191704039-f40d0699-9e5a-4c52-b753-de9332e9f5ce.jpg)
