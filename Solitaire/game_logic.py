@@ -213,6 +213,7 @@ class Logic:
                         self, first_of_cascading_card.value, from_stack)
                     # there are stack(s) the card can move to
                     if stack_card_can_move_to != []:
+                        # choose first available option
                         stack_to_go = stack_card_can_move_to[0]
                         cards_on_stack = Logic.TABLEAU_CARDS[stack_to_go]
                         for card in Logic.cards_moved:
@@ -349,18 +350,21 @@ class Logic:
                 last_card.status = "visible"
 
     def check_available_stack_card_can_move_to(self, card_value, from_stack):
+        """ checks if there are free stack to move card to """
+
         positions = []
+        empty_tableau = []
         for key, card in Logic.TABLEAU_CARDS.items():
             # exclude the origin stack from search
             if key != from_stack:
                 if card == []:
-                    positions.append(key)
+                    empty_tableau.append(key)
                 else:
                     topmost_card = card[-1]
                     if topmost_card.value - 1 == card_value:
                         positions.append(key)
 
-        return positions
+        return positions if positions else empty_tableau
 
     def get_topmost_positons(self):
         positions = []
