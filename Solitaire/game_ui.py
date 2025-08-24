@@ -20,6 +20,8 @@ card_schemes = {
     'Flower': 'flower',
     'Star': 'star',
     'Geometric': 'geometric',
+    'Suits': 'suits',
+    'Circles': 'circles',
 }
 
 
