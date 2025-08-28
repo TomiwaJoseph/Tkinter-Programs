@@ -25,7 +25,6 @@ class Logic:
     animation_job = None
     shrink_speed = 5
     temp_current_theme = None
-    last_hover = []
     cards_moved = []
     move_parameters = {}
 
@@ -43,7 +42,6 @@ class Logic:
         Logic.animation_job = None
         Logic.shrink_speed = 5
         Logic.temp_current_theme = None
-        Logic.last_hover = []
         Logic.cards_moved = []
         Logic.move_parameters = {}
 
@@ -64,7 +62,7 @@ class Logic:
             Logic.move_parameters["origin"] = clicked_card[2]
 
     def handle_tableau_drag_card(self, event):
-        """Handle mouse drag - move the rectangle"""
+        """Handle mouse drag - move the card"""
         if Logic.dragging:
             # Calculate the distance moved
             dx = event.x - Logic.start_x
@@ -98,13 +96,19 @@ class Logic:
             # move the card
             Logic.handle_card_movement(self)
 
-            # if Logic.card_move_occurred:
+            # if move occurred:
             # check if any of the new cards complete a stack
             complete_stack = Logic.check_complete_stack()
             if complete_stack:
                 Logic.remove_cards_from_tableau(self, complete_stack)
 
+            # show cards under the moved card / completed stack
             Logic.show_underlying_cards_if_any(self)
+
+            # check if theres no more move
+            no_card_can_move = Logic.check_if_any_card_can_be_moved()
+            if no_card_can_move:
+                self.show_game_over_frame()
 
             Logic.cards_moved = []
             Logic.move_parameters = {}
@@ -160,6 +164,11 @@ class Logic:
         complete_stack = Logic.check_complete_stack()
         if complete_stack:
             Logic.remove_cards_from_tableau(self, complete_stack)
+
+        # check if theres no more move
+        no_card_can_move = Logic.check_if_any_card_can_be_moved()
+        if no_card_can_move:
+            self.show_game_over_frame()
 
     def handle_card_movement(self):
         from_stack, to_stack, origin_coords = Logic.move_parameters[
@@ -398,6 +407,52 @@ class Logic:
                 complete_stacks.append(key)
 
         return complete_stacks
+
+    def check_if_any_card_can_be_moved():
+        topmosts = []
+        open_values = []
+
+        # Get the open cards and the topmost cards
+        for val in Logic.TABLEAU_CARDS.values():
+            if val == []:
+                topmosts.append([])
+                continue
+            else:
+                topmosts.append(val[-1].value)
+
+            open_values.append([int(i.value)
+                               for i in val if i.status == "visible"])
+
+        # If there's an empty stack,
+        # any card can be moved there
+        if [] in topmosts:
+            return True
+
+        movables = []
+        last_legal_card = 0
+
+        # add the last movable cards to the movable list
+        for lst in open_values:
+            lst = lst[::-1]
+            if len(lst) == 1:
+                movables.append(lst[0])
+            else:
+                for num in range(len(lst) - 1):
+                    if lst[num] + 1 == lst[num + 1]:
+                        last_legal_card = lst[num + 1]
+                    else:
+                        last_legal_card = lst[num]
+                        break
+
+                movables.append(last_legal_card)
+                last_legal_card = 0
+
+        # check if any of the movable cards can go to another stack
+        can_move_bool = []
+        for card in movables:
+            can_move_bool.append(card+1 in topmosts)
+
+        return not any(can_move_bool)
 
     def check_if_card_can_be_moved(id, stack):
         stack = Logic.TABLEAU_CARDS[stack]
