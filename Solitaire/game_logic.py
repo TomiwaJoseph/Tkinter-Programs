@@ -22,7 +22,7 @@ class Logic:
     dragging = False
     start_x = None
     start_y = None
-    animation_job = None
+    animation_is_done = True
     shrink_speed = 5
     temp_current_theme = None
     cards_moved = []
@@ -39,7 +39,7 @@ class Logic:
         Logic.dragging = False
         Logic.start_x = None
         Logic.start_y = None
-        Logic.animation_job = None
+        Logic.animation_is_done = True
         Logic.shrink_speed = 5
         Logic.temp_current_theme = None
         Logic.cards_moved = []
@@ -119,56 +119,57 @@ class Logic:
         if int(the_id) != Logic.COVERED_CARDS_REMAINING:
             return
 
-        card_values = Logic.get_card_value(the_id)
-        card_position = self.game_canvas.coords(the_id)
-        positions = Logic.get_topmost_positons(self)
+        if Logic.animation_is_done:
+            card_values = Logic.get_card_value(the_id)
+            card_position = self.game_canvas.coords(the_id)
+            positions = Logic.get_topmost_positons(self)
 
-        for idx, value in enumerate(card_values):
-            # create card on top of the pile
-            initial_x, initial_y = card_position
-            image = self.card_theme_image
-            new_card = self.game_canvas.create_image(
-                initial_x, initial_y, image=image, tags="animated")
-            target_x, target_y = positions[idx]
-            # animate the card
-            Logic.animate_card(self, new_card, target_x, target_y)
+            for idx, value in enumerate(card_values):
+                # create card on top of the pile
+                initial_x, initial_y = card_position
+                image = self.card_theme_image
+                new_card = self.game_canvas.create_image(
+                    initial_x, initial_y, image=image, tags="animated")
+                target_x, target_y = positions[idx]
+                # animate the card
+                Logic.animate_card(self, new_card, target_x, target_y)
 
-            # update the card image
-            card_name = f"{Logic.suit_dict.get(value, value)}_of_{Logic.SUIT_TYPE}"
-            image = self.card_suit_images[card_name]
-            self.game_canvas.itemconfig(new_card, image=image)
+                # update the card image
+                card_name = f"{Logic.suit_dict.get(value, value)}_of_{Logic.SUIT_TYPE}"
+                image = self.card_suit_images[card_name]
+                self.game_canvas.itemconfig(new_card, image=image)
 
-            # update the card image tags
-            stack_name = f"stack_{idx+1}"
-            self.game_canvas.itemconfig(new_card, tags=(
-                stack_name, f"card-{new_card}", f"{target_x}-{target_y}"))
+                # update the card image tags
+                stack_name = f"stack_{idx+1}"
+                self.game_canvas.itemconfig(new_card, tags=(
+                    stack_name, f"card-{new_card}", f"{target_x}-{target_y}"))
 
-            the_card = Card(new_card, "tableau-card", value, "visible")
-            Logic.TABLEAU_CARDS[stack_name].append(the_card)
+                the_card = Card(new_card, "tableau-card", value, "visible")
+                Logic.TABLEAU_CARDS[stack_name].append(the_card)
 
-            self.game_canvas.tag_bind(new_card, "<Button-1>", lambda event,
-                                      instance=self: Logic.handle_tableau_card_click(instance, event))
-            self.game_canvas.tag_bind(new_card, "<B1-Motion>", lambda event,
-                                      instance=self: Logic.handle_tableau_drag_card(instance, event))
-            self.game_canvas.tag_bind(new_card, "<ButtonRelease-1>", lambda event,
-                                      instance=self: Logic.handle_tableau_drop_card(instance, event))
+                self.game_canvas.tag_bind(new_card, "<Button-1>", lambda event,
+                                          instance=self: Logic.handle_tableau_card_click(instance, event))
+                self.game_canvas.tag_bind(new_card, "<B1-Motion>", lambda event,
+                                          instance=self: Logic.handle_tableau_drag_card(instance, event))
+                self.game_canvas.tag_bind(new_card, "<ButtonRelease-1>", lambda event,
+                                          instance=self: Logic.handle_tableau_drop_card(instance, event))
 
-        # delete the card from the stock pile
-        self.game_canvas.delete(the_id)
-        # remove the card from the stock pile
-        Logic.remove_card_from_pile(the_id)
+            # delete the card from the stock pile
+            self.game_canvas.delete(the_id)
+            # remove the card from the stock pile
+            Logic.remove_card_from_pile(the_id)
 
-        Logic.COVERED_CARDS_REMAINING -= 1
+            Logic.COVERED_CARDS_REMAINING -= 1
 
-        # check if any of the new cards complete a stack
-        complete_stack = Logic.check_complete_stack()
-        if complete_stack:
-            Logic.remove_cards_from_tableau(self, complete_stack)
+            # check if any of the new cards complete a stack
+            complete_stack = Logic.check_complete_stack()
+            if complete_stack:
+                Logic.remove_cards_from_tableau(self, complete_stack)
 
-        # check if theres no more move
-        no_card_can_move = Logic.check_if_any_card_can_be_moved()
-        if no_card_can_move:
-            self.show_game_over_frame()
+            # check if theres no more move
+            no_card_can_move = Logic.check_if_any_card_can_be_moved()
+            if no_card_can_move:
+                self.show_game_over_frame()
 
     def handle_card_movement(self):
         from_stack, to_stack, origin_coords = Logic.move_parameters[
@@ -426,7 +427,7 @@ class Logic:
         # If there's an empty stack,
         # any card can be moved there
         if [] in topmosts:
-            return True
+            return False
 
         movables = []
         last_legal_card = 0
@@ -452,7 +453,7 @@ class Logic:
         for card in movables:
             can_move_bool.append(card+1 in topmosts)
 
-        return not any(can_move_bool)
+        return not any(can_move_bool) and Logic.STOCK_PILE_CARDS == []
 
     def check_if_card_can_be_moved(id, stack):
         stack = Logic.TABLEAU_CARDS[stack]
@@ -502,6 +503,7 @@ class Logic:
         pixel_step = 3
 
         if abs(dx) > pixel_step or abs(dy) > pixel_step:
+            Logic.animation_is_done = False
             move_x = min(abs(dx), pixel_step) * \
                 (1 if dx > 0 else -1 if dx < 0 else 0)
             move_y = min(abs(dy), pixel_step) * \
@@ -511,6 +513,7 @@ class Logic:
             self.master.after(
                 2, Logic.animate_card, self, card, target_x, target_y)
         else:
+            Logic.animation_is_done = True
             self.game_canvas.coords(card, target_x, target_y)
 
     def check_numbers_are_in_order(lst):
