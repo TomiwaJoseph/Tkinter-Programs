@@ -45,6 +45,7 @@ class MainPage(Frame):
         self.create_tableau()
         self.show_playable_cards()
         self.game_start_time = time.time()
+        self.game_over_veil = Frame(width=750, height=680)
         self.about_app_veil = Frame(width=750, height=680)
         self.about_developer_veil = Frame(width=750, height=680)
 
@@ -255,6 +256,7 @@ class MainPage(Frame):
                bd=0, bg='#0A1310', fg='#fff', command=lambda: self.master.destroy()).place(relx=0.4, rely=0.78, anchor="w")
 
     def show_about_app(self):
+        self.hide_game_over_veil()
         self.hide_about_app_veil()
         self.hide_about_developer_veil()
         backdrop_color = backgdrop_color_schemes.get(
@@ -306,6 +308,7 @@ class MainPage(Frame):
             "fira code medium", 13), width=16, command=self.hide_about_app_veil).place(relx=0.5, rely=0.9, anchor="center")
 
     def show_about_developer(self):
+        self.hide_game_over_veil()
         self.hide_about_app_veil()
         self.hide_about_developer_veil()
         backdrop_color = backgdrop_color_schemes.get(
@@ -335,6 +338,24 @@ class MainPage(Frame):
         Button(self.about_developer_veil, text="Close", bd=0, fg='#fff', bg='#0A1310', font=("fira code medium",
                13), width=16, command=self.hide_about_developer_veil).place(relx=0.5, rely=0.8, anchor="center")
 
+    def show_game_over_frame(self):
+        backdrop_color = backgdrop_color_schemes.get(
+            Logic.CURRENT_BACKDROP_THEME)
+        self.game_over_veil = Frame(
+            width=440, height=150, bg=backdrop_color)
+        self.game_over_veil.place(relx=0.5, rely=0.5, anchor="center")
+
+        game_over_canvas = Canvas(self.game_over_veil, width=430, height=140,
+                                  border=3, relief="ridge", borderwidth=3)
+        game_over_canvas.place(relx=0.5, rely=0.5, anchor="center")
+        game_over_canvas.create_text(110, 50, font=("Mosk Normal 400", 18), fill="#0A1310",
+                                     anchor='w', text="You are out of moves!")
+
+        Button(game_over_canvas, text="Close", bd=0, fg='#fff', bg='#0A1310', font=("fira code medium",
+               13), width=16, command=self.hide_game_over_veil).place(relx=0.3, rely=0.7, anchor="center")
+        Button(game_over_canvas, text="New Game", bd=0, fg='#fff', bg='#0A1310', font=("fira code medium",
+               13), width=16, command=lambda: self.master.switch_frame(MainPage)).place(relx=0.7, rely=0.7, anchor="center")
+
     def start_new_game(self):
         return self.master.switch_frame(MainPage)
 
@@ -352,6 +373,9 @@ class MainPage(Frame):
 
     def hide_about_developer_veil(self):
         self.about_developer_veil.place_forget()
+
+    def hide_game_over_veil(self):
+        self.game_over_veil.place_forget()
 
     def select_random_elements(self, input_list, num_to_select):
         selected_elements = []
