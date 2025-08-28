@@ -342,10 +342,10 @@ class MainPage(Frame):
         backdrop_color = backgdrop_color_schemes.get(
             Logic.CURRENT_BACKDROP_THEME)
         self.game_over_veil = Frame(
-            width=440, height=150, bg=backdrop_color)
+            width=460, height=150, bg=backdrop_color)
         self.game_over_veil.place(relx=0.5, rely=0.5, anchor="center")
 
-        game_over_canvas = Canvas(self.game_over_veil, width=430, height=140,
+        game_over_canvas = Canvas(self.game_over_veil, width=450, height=140,
                                   border=3, relief="ridge", borderwidth=3)
         game_over_canvas.place(relx=0.5, rely=0.5, anchor="center")
         game_over_canvas.create_text(110, 50, font=("Mosk Normal 400", 18), fill="#0A1310",
