@@ -1,4 +1,4 @@
-from tkinter import Label, Frame, Canvas, Button, Menu, StringVar
+from tkinter import Label, Frame, Canvas, Button, Menu, StringVar, messagebox
 from game_logic import Logic
 import time
 from game_card import Card
@@ -30,6 +30,7 @@ class MainPage(Frame):
         Frame.__init__(self, root)
         self.master = root
         self.master.geometry("750x680+308+20")
+        root.protocol('WM_DELETE_WINDOW', self.exit_game_window)
         self.master.resizable(0, 0)
         # ============== Variables ==================
         self.backdrop_choice = StringVar()
@@ -168,10 +169,13 @@ class MainPage(Frame):
         game_menu = Menu(menubar, tearoff=0)
         menubar.add_cascade(label='Game', menu=game_menu)
         game_menu.add_command(
-            label='New Game', command=lambda: self.master.switch_frame(MainPage))
+            label='Go to settings', command=self.go_back_to_settings)
         # Add line between New Game and Exit
         game_menu.add_separator()
-        game_menu.add_command(label='Exit', command=self.master.destroy)
+        game_menu.add_command(
+            label='New Game', command=lambda: self.master.switch_frame(MainPage))
+        game_menu.add_separator()
+        game_menu.add_command(label='Exit', command=self.exit_game_window)
         self.master.config(menu=menubar)
         # ===================================
         options_menu = Menu(menubar, tearoff=0)
@@ -358,6 +362,18 @@ class MainPage(Frame):
 
     def start_new_game(self):
         return self.master.switch_frame(MainPage)
+
+    def exit_game_window(self):
+        confirm_exit = messagebox.askyesno("Quit?", "Are you sure?")
+        if confirm_exit:
+            self.master.destroy()
+
+    def go_back_to_settings(self):
+        confirm_exit = messagebox.askyesno(
+            "Go to Settings?", "Your progress will be lost.\nAre you sure?")
+        if confirm_exit:
+            from main import SettingsPage
+            self.master.switch_frame(SettingsPage)
 
     def formatted_game_time(self, start_time, end_time):
         total_seconds = int(end_time - start_time)
