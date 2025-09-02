@@ -186,135 +186,29 @@ class Logic:
         float_x, float_y = origin_coords.split("-")
         dx, dy = float(float_x), float(float_y)
 
-        # check if the card be be moved to the destination stack
+        # check if the clicked/dragged card be be moved
         can_go_to_destination = Logic.check_if_card_can_go_to_destination(
             from_stack, to_stack, Logic.cards_moved[0])
 
-        # if card(s) was/were dragged, return card(s) to same stack
-        # clicking occurred, therefore find nearest stack it can go to
+        # card(s) clicked/dragged can be moved
+        # move card(s) accordingly
         if can_go_to_destination:
-            # movement or click from original stack to same stack
-            if from_stack == to_stack:
-                # if only one card is moved
-                if len(Logic.cards_moved) == 1:
-                    card = Logic.cards_moved[0]
-                    stack_card_can_move_to = Logic.check_available_stack_card_can_move_to(
-                        self, card.value, from_stack)
-                    if stack_card_can_move_to != []:
-                        stack_to_go = stack_card_can_move_to[0]
-                        cards_on_stack = Logic.TABLEAU_CARDS[stack_to_go]
-                        # if there is no card on the stack
-                        if cards_on_stack == []:
-                            position = Logic.STACK_STARTING_POSITIONS[stack_to_go]
-                            dx, dy = position
-                            self.game_canvas.coords(card.id, int(dx), int(dy))
-                            # self.game_canvas.tag_raise(card.id)
-                            final_coords = dx, dy
-                        else:
-                            last_card = cards_on_stack[-1]
-                            tag = self.game_canvas.gettags(last_card.id)[2]
-                            float_x, float_y = tag.split("-")
-                            dx, dy = float(float_x), float(float_y)
-                            self.game_canvas.coords(
-                                card.id, int(dx), int(dy)+25)
-                            self.game_canvas.tag_raise(card.id)
-                            final_coords = dx, dy+25
-                        Logic.move_parameters["to"] = stack_to_go
-                        Logic.MOVES_COUNT += 1
-                        Logic.update_card_lists(
-                            self, from_stack, stack_to_go, card, final_coords)
-                    else:
-                        # no other stack to move to...
-                        # drop card back on same stack
-                        self.game_canvas.coords(card.id, int(dx), int(dy))
-                # cascading cards are clicked
+            # card(s) was/were dragged
+            if Logic.card_was_dragged:
+                if from_stack == to_stack:
+                    Logic.handle_same_stack_cards_drag(self, dx, dy)
                 else:
-                    first_of_cascading_card = Logic.cards_moved[0]
-                    stack_card_can_move_to = Logic.check_available_stack_card_can_move_to(
-                        self, first_of_cascading_card.value, from_stack)
-                    # there are stack(s) the card can move to
-                    if stack_card_can_move_to != []:
-                        # choose first available option
-                        stack_to_go = stack_card_can_move_to[0]
-                        cards_on_stack = Logic.TABLEAU_CARDS[stack_to_go]
-                        for card in Logic.cards_moved:
-                            if cards_on_stack == []:
-                                position = Logic.STACK_STARTING_POSITIONS[stack_to_go]
-                                dx, dy = position
-                                self.game_canvas.coords(
-                                    card.id, int(dx), int(dy))
-                                self.game_canvas.tag_raise(card.id)
-                                final_coords = dx, dy
-                            else:
-                                last_card_on_destination_stack = Logic.TABLEAU_CARDS[stack_to_go][-1]
-                                last_card_id = last_card_on_destination_stack.id
-                                tag = self.game_canvas.gettags(last_card_id)[2]
-                                float_x, float_y = tag.split("-")
-                                dx, dy = float(float_x), float(float_y)
-                                self.game_canvas.coords(
-                                    card.id, int(dx), int(dy)+25)
-                                self.game_canvas.tag_raise(card.id)
-                                final_coords = dx, dy+25
-                            Logic.update_card_lists(
-                                self, from_stack, stack_to_go, card, final_coords)
-                        Logic.move_parameters["to"] = stack_to_go
-                        Logic.MOVES_COUNT += 1
-                    else:
-                        # no other stack to move to...
-                        # drop card back on same stack
-                        for card in Logic.cards_moved:
-                            tags = self.game_canvas.gettags(card.id)
-                            card_coords = tags[2].split("-")
-                            dx, dy = float(card_coords[0]), float(
-                                card_coords[1])
-                            self.game_canvas.coords(card.id, int(dx), int(dy))
-            # movement from original stack to another stack
+                    Logic.handle_different_stack_cards_drag(
+                        self, from_stack, to_stack)
+            # card(s) was/were clicked
             else:
-                # if only one card is moved
                 if len(Logic.cards_moved) == 1:
-                    # if empty stack
-                    if Logic.TABLEAU_CARDS[to_stack] == []:
-                        position = Logic.STACK_STARTING_POSITIONS[to_stack]
-                        dx, dy = position
-                        card = Logic.cards_moved[0]
-                        self.game_canvas.coords(card.id, int(dx), int(dy))
-                        final_coords = dx, dy
-                    else:
-                        last_card_on_destination_stack = Logic.TABLEAU_CARDS[to_stack][-1]
-                        last_card_id = last_card_on_destination_stack.id
-                        tag = self.game_canvas.gettags(last_card_id)[2]
-                        float_x, float_y = tag.split("-")
-                        dx, dy = float(float_x), float(float_y)
-                        card = Logic.cards_moved[0]
-
-                        self.game_canvas.coords(card.id, int(dx), int(dy)+25)
-                        final_coords = dx, dy+25
-                    Logic.update_card_lists(
-                        self, from_stack, to_stack, card, final_coords)
+                    Logic.handle_single_card_click(self, from_stack)
                 else:
-                    for card in Logic.cards_moved:
-                        # final_coords = None
-                        if Logic.TABLEAU_CARDS[to_stack] == []:
-                            position = Logic.STACK_STARTING_POSITIONS[to_stack]
-                            dx, dy = position
-                            self.game_canvas.coords(
-                                card.id, int(dx), int(dy))
-                            final_coords = dx, dy
-                        else:
-                            last_card_on_destination_stack = Logic.TABLEAU_CARDS[to_stack][-1]
-                            last_card_id = last_card_on_destination_stack.id
-                            tag = self.game_canvas.gettags(last_card_id)[2]
-                            float_x, float_y = tag.split("-")
-                            dx, dy = float(float_x), float(float_y)
-                            self.game_canvas.coords(
-                                card.id, int(dx), int(dy)+25)
-                            final_coords = dx, dy+25
-                        Logic.update_card_lists(
-                            self, from_stack, to_stack, card, final_coords)
-                Logic.MOVES_COUNT += 1
+                    Logic.handle_multiple_card_click(self, from_stack)
         else:
-            # return card back to stack
-            # if only one card is moved
+            # card(s) clicked/dragged cannot be moved
+            # return card(s) back to stack
             if len(Logic.cards_moved) == 1:
                 card_id = Logic.cards_moved[0].id
                 self.game_canvas.coords(card_id, int(dx), int(dy))
@@ -324,6 +218,129 @@ class Logic:
                     card_coords = tags[2].split("-")
                     dx, dy = float(card_coords[0]), float(card_coords[1])
                     self.game_canvas.coords(card.id, int(dx), int(dy))
+
+    def handle_same_stack_cards_drag(self, dx, dy):
+        """
+        card(s) is/are dragged on the same stack,
+        return card(s) to same stack
+        """
+        if len(Logic.cards_moved) == 1:
+            card = Logic.cards_moved[0]
+            self.game_canvas.coords(card.id, int(dx), int(dy))
+        else:
+            for card in Logic.cards_moved:
+                tags = self.game_canvas.gettags(card.id)
+                card_coords = tags[2].split("-")
+                dx, dy = float(card_coords[0]), float(
+                    card_coords[1])
+                self.game_canvas.coords(card.id, int(dx), int(dy))
+
+    def handle_different_stack_cards_drag(self, from_stack, to_stack):
+        """
+        card(s) is/are dragged from a stack to another stack,
+        move card(s) to the stack
+        """
+        if len(Logic.cards_moved) == 1:
+            if Logic.TABLEAU_CARDS[to_stack] == []:
+                position = Logic.STACK_STARTING_POSITIONS[to_stack]
+                dx, dy = position
+                card = Logic.cards_moved[0]
+                self.game_canvas.coords(card.id, int(dx), int(dy))
+                final_coords = dx, dy
+            else:
+                last_card_on_destination_stack = Logic.TABLEAU_CARDS[to_stack][-1]
+                last_card_id = last_card_on_destination_stack.id
+                tag = self.game_canvas.gettags(last_card_id)[2]
+                float_x, float_y = tag.split("-")
+                dx, dy = float(float_x), float(float_y)
+                card = Logic.cards_moved[0]
+
+                self.game_canvas.coords(
+                    card.id, int(dx), int(dy)+25)
+                final_coords = dx, dy+25
+            Logic.update_card_lists(
+                self, from_stack, to_stack, card, final_coords)
+        else:
+            for card in Logic.cards_moved:
+                # final_coords = None
+                if Logic.TABLEAU_CARDS[to_stack] == []:
+                    position = Logic.STACK_STARTING_POSITIONS[to_stack]
+                    dx, dy = position
+                    self.game_canvas.coords(
+                        card.id, int(dx), int(dy))
+                    final_coords = dx, dy
+                else:
+                    last_card_on_destination_stack = Logic.TABLEAU_CARDS[to_stack][-1]
+                    last_card_id = last_card_on_destination_stack.id
+                    tag = self.game_canvas.gettags(last_card_id)[2]
+                    float_x, float_y = tag.split("-")
+                    dx, dy = float(float_x), float(float_y)
+                    self.game_canvas.coords(
+                        card.id, int(dx), int(dy)+25)
+                    final_coords = dx, dy+25
+                Logic.update_card_lists(
+                    self, from_stack, to_stack, card, final_coords)
+        Logic.MOVES_COUNT += 1
+
+    def handle_single_card_click(self, from_stack):
+        card = Logic.cards_moved[0]
+        stack_card_can_move_to = Logic.check_available_stack_card_can_move_to(
+            self, card.value, from_stack)
+        if stack_card_can_move_to != []:
+            stack_to_go = stack_card_can_move_to[0]
+            cards_on_stack = Logic.TABLEAU_CARDS[stack_to_go]
+            # if there is no card on the stack
+            if cards_on_stack == []:
+                position = Logic.STACK_STARTING_POSITIONS[stack_to_go]
+                dx, dy = position
+                self.game_canvas.coords(card.id, int(dx), int(dy))
+                # self.game_canvas.tag_raise(card.id)
+                final_coords = dx, dy
+            else:
+                last_card = cards_on_stack[-1]
+                tag = self.game_canvas.gettags(last_card.id)[2]
+                float_x, float_y = tag.split("-")
+                dx, dy = float(float_x), float(float_y)
+                self.game_canvas.coords(
+                    card.id, int(dx), int(dy)+25)
+                self.game_canvas.tag_raise(card.id)
+                final_coords = dx, dy+25
+            Logic.move_parameters["to"] = stack_to_go
+            Logic.MOVES_COUNT += 1
+            Logic.update_card_lists(
+                self, from_stack, stack_to_go, card, final_coords)
+
+    def handle_multiple_card_click(self, from_stack):
+        first_of_cascading_card = Logic.cards_moved[0]
+        stack_card_can_move_to = Logic.check_available_stack_card_can_move_to(
+            self, first_of_cascading_card.value, from_stack)
+        # there are stack(s) the card can move to
+        if stack_card_can_move_to != []:
+            # choose first available option
+            stack_to_go = stack_card_can_move_to[0]
+            cards_on_stack = Logic.TABLEAU_CARDS[stack_to_go]
+            for card in Logic.cards_moved:
+                if cards_on_stack == []:
+                    position = Logic.STACK_STARTING_POSITIONS[stack_to_go]
+                    dx, dy = position
+                    self.game_canvas.coords(
+                        card.id, int(dx), int(dy))
+                    self.game_canvas.tag_raise(card.id)
+                    final_coords = dx, dy
+                else:
+                    last_card_on_destination_stack = Logic.TABLEAU_CARDS[stack_to_go][-1]
+                    last_card_id = last_card_on_destination_stack.id
+                    tag = self.game_canvas.gettags(last_card_id)[2]
+                    float_x, float_y = tag.split("-")
+                    dx, dy = float(float_x), float(float_y)
+                    self.game_canvas.coords(
+                        card.id, int(dx), int(dy)+25)
+                    self.game_canvas.tag_raise(card.id)
+                    final_coords = dx, dy+25
+                Logic.update_card_lists(
+                    self, from_stack, stack_to_go, card, final_coords)
+            Logic.move_parameters["to"] = stack_to_go
+            Logic.MOVES_COUNT += 1
 
     def update_card_lists(self, from_stack, to_stack, card, new_coords):
         # change tags for the card image
