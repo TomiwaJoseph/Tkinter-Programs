@@ -1,4 +1,5 @@
 from game_card import Card
+from math import sqrt
 
 
 class Logic:
@@ -22,8 +23,9 @@ class Logic:
     dragging = False
     start_x = None
     start_y = None
+    card_was_dragged = False
+    drag_threshold = 1
     animation_is_done = True
-    shrink_speed = 5
     temp_current_theme = None
     cards_moved = []
     move_parameters = {}
@@ -39,8 +41,9 @@ class Logic:
         Logic.dragging = False
         Logic.start_x = None
         Logic.start_y = None
+        Logic.card_was_dragged = False
+        Logic.drag_threshold = 1
         Logic.animation_is_done = True
-        Logic.shrink_speed = 5
         Logic.temp_current_theme = None
         Logic.cards_moved = []
         Logic.move_parameters = {}
@@ -67,6 +70,11 @@ class Logic:
             # Calculate the distance moved
             dx = event.x - Logic.start_x
             dy = event.y - Logic.start_y
+
+            # checks if drag or click
+            distance = sqrt(dx*dx + dy*dy)
+            if distance > Logic.drag_threshold:
+                Logic.card_was_dragged = True
 
             # Move all cards under (including the clicked card)
             for card in Logic.cards_moved:
@@ -112,6 +120,7 @@ class Logic:
 
             Logic.cards_moved = []
             Logic.move_parameters = {}
+            Logic.card_was_dragged = False
 
     def handle_stock_pile_click(self):
         clicked_card = self.game_canvas.gettags("current")
@@ -181,6 +190,8 @@ class Logic:
         can_go_to_destination = Logic.check_if_card_can_go_to_destination(
             from_stack, to_stack, Logic.cards_moved[0])
 
+        # if card(s) was/were dragged, return card(s) to same stack
+        # clicking occurred, therefore find nearest stack it can go to
         if can_go_to_destination:
             # movement or click from original stack to same stack
             if from_stack == to_stack:
